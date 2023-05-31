@@ -1,12 +1,16 @@
 import "./App.css";
-import SignUp from "./Components/SignUp/SignUp";
-import LoginPage from "./Pages/LoginPage";
+import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserRoutes from "./routes/UserRoutes";
 
 function App() {
     return (
         <>
-            {/* <LoginPage /> */}
-            <SignUp />
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/*" element={<UserRoutes />} />
+                </Routes>
+            </BrowserRouter>
         </>
     );
 }

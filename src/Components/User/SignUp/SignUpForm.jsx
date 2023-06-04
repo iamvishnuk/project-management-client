@@ -1,13 +1,11 @@
 import axios from "axios";
-import React, { useState } from "react";
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
-import { signUpSchema } from "../../yup";
+import { signUpSchema } from "../../../yup";
 
 const initialValues = {
     username: "",
     email: "",
-    number: "",
     password: "",
     confirm_password: "",
 };
@@ -26,15 +24,19 @@ function SignUpForm() {
 
     const registerUser = async () => {
         try {
-            const { data } = await axios.post("http://localhost:4000", values, {
-                withCredentials: true,
-            });
+            const { data } = await axios.post(
+                "http://localhost:4000/signup",
+                values,
+                {
+                    withCredentials: true,
+                }
+            );
             if (data) {
                 if (data.exist) {
                     toast.warn("Email is already used");
                 }
                 if (data.created) {
-                    toast.success("user created successfully");
+                    toast.success("Verification like send to email");
                 }
             }
         } catch (error) {
@@ -82,24 +84,6 @@ function SignUpForm() {
                         {errors.email && touched.email ? (
                             <label className="text-red-500">
                                 {errors.email}
-                            </label>
-                        ) : null}
-                    </div>
-                    <div className="my-5">
-                        <label htmlFor="">Phone Number</label>
-                        <input
-                            className="w-full border rounded-md bg-transparent border-gray-400 p-3"
-                            type="number"
-                            placeholder="Enter your phone number"
-                            autoComplete="off"
-                            name="number"
-                            value={values.number}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        {errors.number && touched.number ? (
-                            <label className="text-red-500">
-                                {errors.number}
                             </label>
                         ) : null}
                     </div>

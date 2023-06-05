@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import { signUpSchema } from "../../../yup";
+import { userApi } from "../../../Utils/Api/Apis";
 
 const initialValues = {
     username: "",
@@ -16,7 +16,6 @@ function SignUpForm() {
             initialValues: initialValues,
             validationSchema: signUpSchema,
             onSubmit: (values, action) => {
-                console.log(values);
                 registerUser();
                 action.resetForm();
             },
@@ -24,13 +23,9 @@ function SignUpForm() {
 
     const registerUser = async () => {
         try {
-            const { data } = await axios.post(
-                "http://localhost:4000/signup",
-                values,
-                {
-                    withCredentials: true,
-                }
-            );
+            const { data } = await userApi.post("/signup", values, {
+                withCredentials: true,
+            });
             if (data) {
                 if (data.exist) {
                     toast.warn("Email is already used");

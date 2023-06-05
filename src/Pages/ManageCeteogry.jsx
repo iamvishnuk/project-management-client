@@ -1,9 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../Components/User/Modal/Modal";
 import Sidebar from "../Components/User/Sidebar/Sidebar";
+import MangeCategoryTable from "../Components/User/Table/ManageCategoryTable";
+import { userApi } from "../Utils/Api/Apis";
+import { useFormik } from "formik";
+import { createCategroySchem } from "../yup";
+import { toast, ToastContainer } from "react-toastify";
+
+const initialValues = {
+    categoryName: "",
+    categoryDescription: "",
+};
 
 const ManageCeteogry = () => {
     const [showModal, setShowModal] = useState(false);
+    const [categoryData, setCategoryData] = useState([]);
+
+    const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+        useFormik({
+            initialValues: initialValues,
+            validationSchema: createCategroySchem,
+            onSubmit: (values, action) => {
+                createCategory();
+                action.resetForm();
+            },
+        });
+
+    const createCategory = async () => {
+        try {
+            const { data, status } = await userApi.post(
+                "/create-category",
+                values,
+                {
+                    withCredentials: true,
+                }
+            );
+            if (status === 201) {
+                setShowModal(false);
+                toast.success(data.message);
+            }
+        } catch (error) {
+            console.log(error.response.data.message);
+            if (error.response && error.response.status === 422) {
+                toast.error(error.response.data.message);
+            } else {
+                console.log(error.message);
+            }
+        }
+    };
+
+    useEffect(() => {
+        const getCategoryDetail = async () => {
+            await userApi
+                .get("/get-category-data")
+                .then((response) => {
+                    console.log(response);
+                    setCategoryData(response.data.data);
+                })
+                .catch((err) => console.log(err));
+        };
+        getCategoryDetail();
+    }, [showModal]);
+
     return (
         <>
             <div className="flex">
@@ -19,92 +77,65 @@ const ManageCeteogry = () => {
                             Create Category
                         </button>
                     </div>
-                    <div className="overflow-x-auto">
-                        <div className="p-2 overflow-auto rounded-lg shadow border-2">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-b-2 border-gray-200">
-                                    <tr>
-                                        <th className="uppercase p-3 text-sm font-semibold tracking-wide text-left">
-                                            No
-                                        </th>
-                                        <th className="uppercase p-3 text-sm font-semibold tracking-wide text-left">
-                                            Category Name
-                                        </th>
-                                        <th className="uppercase p-3 text-sm font-semibold tracking-wide text-left">
-                                            Category Description
-                                        </th>
-                                        <th className="uppercase p-3 text-sm font-semibold tracking-wide text-left">
-                                            Created At
-                                        </th>
-                                        <th className="uppercase p-3 text-sm font-semibold tracking-wide text-left">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    <tr>
-                                        <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                                            sdkfjoejrjljwld
-                                        </td>
-                                        <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                                            sdkfjoejrjljwld dfjsdjfsdfjsfjsdfjs
-                                            osjdpfjsdpfjpsdfjsjsjsfshsdjjksdhf
-                                        </td>
-                                        <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                                            sdkfjoejrjljwld
-                                        </td>
-                                        <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                                            sdkfjoejrjljwld
-                                        </td>
-                                        <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                                            <button className="m-2">
-                                                <i className="fa-solid fa-pen-to-square text-blue-700"></i>
-                                            </button>
-                                            <button className="m-2">
-                                                <i className="fa-solid fa-trash text-red-600"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <MangeCategoryTable categoryData={categoryData} />
                 </div>
             </div>
             <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
-                <div className="p-5">
-                    <h2 className="font-bold text-xl">
-                        Add new Project Category
-                    </h2>
-                    <form action="">
-                        <div className="my-5">
-                            <label className="" htmlFor="">
-                                Category Name
-                            </label>
-                            <input
-                                className="w-full border rounded-md bg-transparent border-gray-400 p-3"
-                                type="text"
-                                placeholder="Enter your category name"
-                            />
-                        </div>
-                        <div className="my-5">
-                            <label className="" htmlFor="">
-                                Category Description
-                            </label>
-                            <textarea
-                                className="w-full border rounded-md bg-transparent border-gray-400 p-3"
-                                type="text"
-                                placeholder="Enter description about the category"
-                            />
-                        </div>
-                        <div className="flex justify-end">
-                            <button className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white">
-                                Add
-                            </button>
-                        </div>
-                    </form>
+                <div className="w-[600px]">
+                    <div className="p-5">
+                        <h2 className="font-bold text-xl">
+                            Add new Project Category
+                        </h2>
+                        <form action="" onSubmit={handleSubmit}>
+                            <div className="my-5">
+                                <label className="" htmlFor="">
+                                    Category Name
+                                </label>
+                                <input
+                                    className="w-full border rounded-md bg-transparent border-gray-400 p-3"
+                                    type="text"
+                                    placeholder="Enter your category name"
+                                    name="categoryName"
+                                    value={values.categoryName}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                                {errors.categoryName && touched.categoryName ? (
+                                    <label className="text-red-500">
+                                        {errors.categoryName}
+                                    </label>
+                                ) : null}
+                            </div>
+                            <div className="my-5">
+                                <label className="" htmlFor="">
+                                    Category Description
+                                </label>
+                                <textarea
+                                    className="w-full border rounded-md bg-transparent border-gray-400 p-3"
+                                    type="text"
+                                    placeholder="Enter description about the category"
+                                    name="categoryDescription"
+                                    value={values.categoryDescription}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                                {errors.categoryDescription &&
+                                touched.categoryDescription ? (
+                                    <label className="text-red-500">
+                                        {errors.categoryDescription}
+                                    </label>
+                                ) : null}
+                            </div>
+                            <div className="flex justify-end">
+                                <button className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white">
+                                    Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </Modal>
+            <ToastContainer />
         </>
     );
 };

@@ -8,3 +8,14 @@ export const signUpSchema = Yup.object({
         .required("Please enter the password")
         .oneOf([Yup.ref("password"), null], "Password does't match"),
 });
+
+export const createCategroySchem = Yup.object({
+    categoryName: Yup.string()
+        .min(2)
+        .max(100)
+        .required("Please enter a category name"),
+    categoryDescription: Yup.string()
+        .min(10)
+        .max(250)
+        .required("Please enter the description"),
+});

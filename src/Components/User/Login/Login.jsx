@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { userApi } from "../../../Utils/Api/Apis";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -16,8 +16,8 @@ function Login() {
             } else if (password === "") {
                 setPasswordRequired(true);
             } else {
-                const { data, status } = await axios.post(
-                    "http://localhost:4000/login",
+                const { data, status } = await userApi.post(
+                    "/login",
                     {
                         email: email,
                         password: password,

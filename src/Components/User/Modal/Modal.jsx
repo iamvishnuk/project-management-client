@@ -11,12 +11,12 @@ const AddCategoryModal = ({ isVisible, onClose, children }) => {
             onClick={handleClose}
             id="wrapper"
         >
-            <div className="w-[600px] flex flex-col">
+            <div className=" flex flex-col">
                 <button
-                    className="text-white text-xl place-self-end"
+                    className="text-white text-2xl place-self-end"
                     onClick={() => onClose()}
                 >
-                    X
+                    <i className="fa-solid fa-xmark"></i>
                 </button>
                 <div className="bg-white p-2 rounded-lg">{children}</div>
             </div>

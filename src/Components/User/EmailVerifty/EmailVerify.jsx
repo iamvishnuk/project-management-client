@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { userApi } from "../../../Utils/Api/Apis";
+import { userAxiosInstance } from "../../../axios/AxiosInstance";
 
 const EmailVerify = () => {
     const [validUrl, setValidUrl] = useState(false);
@@ -10,7 +10,7 @@ const EmailVerify = () => {
         const verifyEmail = async () => {
             try {
                 const url = `/user/${params.id}/verify/${params.token}`;
-                const { data } = userApi.get(url);
+                const { data } = userAxiosInstance.get(url, { withCredentials: true });
                 console.log(data);
                 setValidUrl(true);
             } catch (error) {

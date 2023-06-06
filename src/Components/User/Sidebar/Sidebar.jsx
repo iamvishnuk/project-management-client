@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
+    const navigate = useNavigate();
     return (
         <>
             <div
                 className={`${
-                    open ? "72"  : "w-20"
+                    open ? "72" : "w-20"
                 } p-5 pt-8 duration-300 h-screen bg-gray-100 relative border-r-2`}
             >
                 <img
@@ -33,7 +35,10 @@ const Sidebar = () => {
                 </div>
                 <hr className="mt-5" />
                 <ul className="pt-6 text-black font-medium">
-                    <li className="mt-2 text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">
+                    <li
+                        onClick={() => navigate("/kanban-board")}
+                        className="mt-2 text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                    >
                         <div className="w-6 flex justify-center">
                             <i className="fa-solid fa-list-check text-xl"></i>
                         </div>
@@ -57,7 +62,10 @@ const Sidebar = () => {
                             Project Management
                         </span>
                     </li>
-                    <li className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">
+                    <li
+                        onClick={() => navigate("/manage-category")}
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                    >
                         <div className="w-6 flex justify-center">
                             <i className="fa-solid fa-list-check text-xl"></i>
                         </div>

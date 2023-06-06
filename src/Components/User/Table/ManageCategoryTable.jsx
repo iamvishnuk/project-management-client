@@ -1,21 +1,28 @@
 import React, { useState } from "react";
 import Modal from "../../../Components/User/Modal/Modal";
-import { userApi } from "../../../Utils/Api/Apis";
+import { userAxiosInstance } from "../../../axios/AxiosInstance";
+import { toast } from "react-toastify";
 
-const MangeCategoryTable = ({ categoryData }) => {
+const MangeCategoryTable = ({ categoryData, onDelete }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEditModal, setShowEditeModal] = useState(false);
     const [deleteCategoryId, setDeleteCategoryId] = useState("");
 
     const deleteCategory = async () => {
         try {
-            const { data } = await userApi.get(
-                "/delete-category",
+            const { data } = await userAxiosInstance.get(
+                `/delete-category/${deleteCategoryId}`,
                 {
-                    categoryId: deleteCategoryId,
-                },
-                { withCredentials: true }
+                    withCredentials: true,
+                }
             );
+            // console.log(data)
+            if (data.delete) {
+                console.log("delete if condition");
+                toast.success(data.message);
+                setShowDeleteModal(false);
+                onDelete();
+            }
         } catch (error) {
             console.log(error.message);
         }
@@ -103,7 +110,7 @@ const MangeCategoryTable = ({ categoryData }) => {
                             You won't be able to revert this!
                         </h2>
                         <button
-                            onClick={() => deleteCategory()}
+                            onClick={deleteCategory}
                             className="bg-sky-500 py-2 px-4 border-gray border-opacity-30 text-white font-light text-xl rounded-lg border-4 mr-2"
                         >
                             Yes, delete it!

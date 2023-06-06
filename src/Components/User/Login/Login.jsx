@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { userApi } from "../../../Utils/Api/Apis";
+import { userAxiosInstance } from "../../../axios/AxiosInstance";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailRequried, setEmailRequired] = useState(false);
     const [passwordRequried, setPasswordRequired] = useState(false);
+
+    const navigate = useNavigate();
 
     const login = async (e) => {
         e.preventDefault();
@@ -16,29 +19,30 @@ function Login() {
             } else if (password === "") {
                 setPasswordRequired(true);
             } else {
-                const { data, status } = await userApi.post(
-                    "/login",
-                    {
-                        email: email,
-                        password: password,
-                    },
-                    {
-                        withCredentials: true,
-                    }
-                );
-                if (status === 200) {
-                    if (data.logedIn) {
-                        toast.success(data.message);
-                    }
-                }
+                await userAxiosInstance
+                    .post(
+                        "/",
+                        {
+                            email: email,
+                            password: password,
+                        },
+                        {
+                            withCredentials: true,
+                        }
+                    )
+                    .then((res) => {
+                        localStorage.setItem("userToken", res.data.token);
+                        toast.success(res.data.message);
+                        navigate("/kanban-board");
+                    });
             }
         } catch (error) {
-            console.log(error.response.data.message);
-            if (error.response && error.response.status === 404) {
-                toast.error(error.response.data.message);
-            } else {
-               console.log(error.message);
-            }
+            console.log(error);
+            // if (error.response && error.response.status === 404) {
+            //     toast.error(error.response.data.message);
+            // } else {
+            //     console.log(error.message);
+            // }
         }
     };
 
@@ -117,7 +121,13 @@ function Login() {
                                     </button>
                                 </form>
                                 <label className="my-3" htmlFor="">
-                                    Dont have a account yet
+                                    Dont have a account yet{" "}
+                                    <Link
+                                        className="text-blue-600 font-semibold"
+                                        to={"/signup"}
+                                    >
+                                        SignUp
+                                    </Link>
                                 </label>
                             </div>
                         </div>

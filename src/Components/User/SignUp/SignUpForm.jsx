@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import { signUpSchema } from "../../../yup";
-import { userApi } from "../../../Utils/Api/Apis";
+import { userAxiosInstance } from "../../../axios/AxiosInstance";
+import { Link } from "react-router-dom";
 
 const initialValues = {
     username: "",
@@ -23,7 +24,7 @@ function SignUpForm() {
 
     const registerUser = async () => {
         try {
-            const { data } = await userApi.post("/signup", values, {
+            const { data } = await userAxiosInstance.post("/signup", values, {
                 withCredentials: true,
             });
             if (data) {
@@ -127,7 +128,10 @@ function SignUpForm() {
                     <div id="recaptcha" className="w-full"></div>
                 </form>
                 <label className="my-3" htmlFor="">
-                    Already have a account?
+                    Already have a account?{" "}
+                    <Link className="text-blue-700 font-semibold" to={"/"}>
+                        Log in
+                    </Link>
                 </label>
             </div>
             <ToastContainer />

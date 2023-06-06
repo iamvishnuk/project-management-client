@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "../Components/User/Modal/Modal";
 import Sidebar from "../Components/User/Sidebar/Sidebar";
 import MangeCategoryTable from "../Components/User/Table/ManageCategoryTable";
-import { userApi } from "../Utils/Api/Apis";
+import { userAxiosInstance } from "../axios/AxiosInstance";
 import { useFormik } from "formik";
 import { createCategroySchem } from "../yup";
 import { toast, ToastContainer } from "react-toastify";
@@ -28,7 +28,7 @@ const ManageCeteogry = () => {
 
     const createCategory = async () => {
         try {
-            const { data, status } = await userApi.post(
+            const { data, status } = await userAxiosInstance.post(
                 "/create-category",
                 values,
                 {
@@ -49,16 +49,17 @@ const ManageCeteogry = () => {
         }
     };
 
+    const getCategoryDetail = async () => {
+        await userAxiosInstance
+            .get("/get-category-data")
+            .then((response) => {
+                console.log(response);
+                setCategoryData(response.data.data);
+            })
+            .catch((err) => console.log(err));
+    };
+
     useEffect(() => {
-        const getCategoryDetail = async () => {
-            await userApi
-                .get("/get-category-data")
-                .then((response) => {
-                    console.log(response);
-                    setCategoryData(response.data.data);
-                })
-                .catch((err) => console.log(err));
-        };
         getCategoryDetail();
     }, [showModal]);
 
@@ -77,7 +78,10 @@ const ManageCeteogry = () => {
                             Create Category
                         </button>
                     </div>
-                    <MangeCategoryTable categoryData={categoryData} />
+                    <MangeCategoryTable
+                        categoryData={categoryData}
+                        onDelete={getCategoryDetail}
+                    />
                 </div>
             </div>
             <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
@@ -127,7 +131,10 @@ const ManageCeteogry = () => {
                                 ) : null}
                             </div>
                             <div className="flex justify-end">
-                                <button className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white">
+                                <button
+                                    type="submit"
+                                    className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white"
+                                >
                                     Add
                                 </button>
                             </div>

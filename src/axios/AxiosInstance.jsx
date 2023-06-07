@@ -13,7 +13,7 @@ const createAxiosClient = (baseURL) => {
 const attackToken = (req, tokenName) => {
     let authToken = localStorage.getItem(tokenName);
     if (authToken) {
-        req.headers.Authorization = `Bearer${authToken}`;
+        req.headers.Authorization = `Bearer ${authToken}`;
     }
     return req
 };

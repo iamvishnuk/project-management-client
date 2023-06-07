@@ -68,7 +68,7 @@ const ManageCeteogry = () => {
             <div className="flex">
                 <Sidebar />
                 <div className="bg-white p-10 font-semibold flex-1 h-screen">
-                    <h1 className="text-2xl font-bold">Mange Category</h1>
+                    <h1 className="text-2xl font-bold">Manage Project Category</h1>
                     <div className="mt-3 mb-3 w-full flex justify-end">
                         <button
                             className="bg-btn-green text-white font-medium px-3 py-1 rounded-md"

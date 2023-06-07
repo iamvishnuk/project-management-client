@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
     const navigate = useNavigate();
+    const logout = () => {
+        localStorage.removeItem("userToken");
+        navigate("/");
+    };
     return (
         <>
             <div
@@ -99,6 +103,21 @@ const Sidebar = () => {
                             } orign-left duration-200`}
                         >
                             Profile
+                        </span>
+                    </li>
+                    <li
+                        onClick={logout}
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 text-red-500 hover:bg-red-600 hover:text-white rounded-md"
+                    >
+                        <div className="w-6 flex justify-center">
+                            <i className="fa-solid fa-right-from-bracket text-xl"></i>
+                        </div>
+                        <span
+                            className={`${
+                                !open && "hidden"
+                            } orign-left duration-200`}
+                        >
+                            Logout
                         </span>
                     </li>
                 </ul>

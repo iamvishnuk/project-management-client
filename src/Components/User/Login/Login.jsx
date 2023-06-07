@@ -109,7 +109,7 @@ function Login() {
                                             htmlFor=""
                                             className="text-blue-800 font-semibold"
                                         >
-                                            Forgot password?
+                                            <Link to={"/forgot-password"}>Forgot password?</Link>
                                         </label>
                                     </div>
                                     <button

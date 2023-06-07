@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import Modal from "../../../Components/User/Modal/Modal";
 import { userAxiosInstance } from "../../../axios/AxiosInstance";
 import { toast } from "react-toastify";
+import dateFormat from "dateformat";
 
 const MangeCategoryTable = ({ categoryData, onDelete }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEditModal, setShowEditeModal] = useState(false);
     const [deleteCategoryId, setDeleteCategoryId] = useState("");
+    const [editValue, setEditValue] = useState(null);
 
+    // function for delete the category
     const deleteCategory = async () => {
         try {
             const { data } = await userAxiosInstance.get(
@@ -16,7 +19,6 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                     withCredentials: true,
                 }
             );
-            // console.log(data)
             if (data.delete) {
                 console.log("delete if condition");
                 toast.success(data.message);
@@ -25,6 +27,36 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
             }
         } catch (error) {
             console.log(error.message);
+        }
+    };
+
+    // for changing the value in the category edit state
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditValue((preValue) => ({
+            ...preValue,
+            [name]: value,
+        }));
+    };
+
+    //funtion for editing the category
+    const editCategory = async (e) => {
+        e.preventDefault()
+        try {
+            const { data } = await userAxiosInstance.post(
+                "/edit-category",
+                editValue,
+                { withCredentials: true }
+            );
+            if(data.update) {
+                setShowEditeModal(false);
+                toast.success(data.message)
+                onDelete()
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -66,13 +98,17 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                                             {items.categoryDescription}
                                         </td>
                                         <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                                            {items.createdAt}
+                                            {dateFormat(
+                                                items.createdAt,
+                                                "d / mmmm / yyyy"
+                                            )}
                                         </td>
                                         <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                                             <button
-                                                onClick={() =>
-                                                    setShowEditeModal(true)
-                                                }
+                                                onClick={() => {
+                                                    setEditValue({ ...items });
+                                                    setShowEditeModal(true);
+                                                }}
                                                 className="m-2"
                                             >
                                                 <i className="fa-solid fa-pen-to-square text-blue-700"></i>
@@ -143,6 +179,12 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                                     type="text"
                                     placeholder="Enter your category name"
                                     name="categoryName"
+                                    value={
+                                        editValue == null
+                                            ? ""
+                                            : editValue.categoryName
+                                    }
+                                    onChange={handleInputChange}
                                 />
                             </div>
                             <div className="my-5">
@@ -154,11 +196,20 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                                     type="text"
                                     placeholder="Enter description about the category"
                                     name="categoryDescription"
+                                    value={
+                                        editValue == null
+                                            ? ""
+                                            : editValue.categoryDescription
+                                    }
+                                    onChange={handleInputChange}
                                 />
                             </div>
                             <div className="flex justify-end">
-                                <button className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white">
-                                    Add
+                                <button
+                                    onClick={editCategory}
+                                    className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white"
+                                >
+                                    Update
                                 </button>
                             </div>
                         </form>

@@ -7,12 +7,14 @@ import EmailVerificationPage from "../Pages/EmailVerificationPage";
 import ProtectRoutes from "../Components/User/ProtectRoutes/ProtectRoutes";
 import KanbanBoard from "../Pages/KanbanBoard";
 import PlanPricingPage from "../Pages/PlanPricingPage";
+import ForgotPassword from "../Pages/ForgotPassword";
 
 function UserRoutes() {
     return (
         <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route element={<ProtectRoutes route={"/"} />}>
                 <Route path="/manage-category" element={<ManageCeteogry />} />
                 <Route path="/kanban-board" element={<KanbanBoard />} />

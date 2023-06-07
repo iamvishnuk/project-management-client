@@ -34,7 +34,7 @@ const EmailVerify = () => {
                             Email Verified Successfully
                         </h1>
                         <button
-                            onClick={() => navigate("/login")}
+                            onClick={() => navigate("/")}
                             className="border-1 border-gray-600 py-2 px-8 font-medium text-xl bg-[#01A601] text-white"
                         >
                             Go to Login page

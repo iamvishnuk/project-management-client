@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { userAxiosInstance } from "../../../axios/AxiosInstance";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import jwtDecode from "jwt-decode";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -38,12 +40,41 @@ function Login() {
             }
         } catch (error) {
             console.log(error);
-            // if (error.response && error.response.status === 404) {
-            //     toast.error(error.response.data.message);
-            // } else {
-            //     console.log(error.message);
-            // }
+            if (error.response && error.response.status === 404) {
+                toast.error(error.response.data.message);
+            } else {
+                console.log(error.message);
+            }
         }
+    };
+
+    // google sigin function
+    const responseMessage = async (response) => {
+        const userDetails = jwtDecode(response.credential);
+        try {
+            console.log("function called")
+            const { data, status } = await userAxiosInstance.post(
+                "/google-login",
+                userDetails,
+                { withCredentials: true }
+            );
+            if(status === 200) {
+                localStorage.setItem("userToken",data.token)
+                toast.success(data.message)
+                navigate("/kanban-board")
+            }
+        } catch (error) {
+            console.log(error);
+            if(error.response && error.response.status === 404) {
+                toast.error(error.response.data.message)
+            } else {
+                console.log(error.message)
+            }
+        }
+    };
+
+    const errorMessage = (error) => {
+        console.log(error);
     };
 
     return (
@@ -109,7 +140,9 @@ function Login() {
                                             htmlFor=""
                                             className="text-blue-800 font-semibold"
                                         >
-                                            <Link to={"/forgot-password"}>Forgot password?</Link>
+                                            <Link to={"/forgot-password"}>
+                                                Forgot password?
+                                            </Link>
                                         </label>
                                     </div>
                                     <button
@@ -129,6 +162,12 @@ function Login() {
                                         SignUp
                                     </Link>
                                 </label>
+                                <div className="flex justify-center mt-3">
+                                    <GoogleLogin
+                                        onSuccess={responseMessage}
+                                        onError={errorMessage}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

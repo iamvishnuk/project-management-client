@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { userAxiosInstance } from "../../../axios/AxiosInstance";
+import ErrorPage from "../../../Pages/ErrorPage";
 
 const EmailVerify = () => {
     const [validUrl, setValidUrl] = useState(false);
@@ -10,11 +11,14 @@ const EmailVerify = () => {
         const verifyEmail = async () => {
             try {
                 const url = `/user/${params.id}/verify/${params.token}`;
-                const { data } = userAxiosInstance.get(url, { withCredentials: true });
-                console.log(data);
-                setValidUrl(true);
+                const { data } = await userAxiosInstance.get(url, { withCredentials: true });
+                console.log(data)
+                if(data.verified) {
+                    setValidUrl(true);
+                } else {
+                    setValidUrl(false)
+                }
             } catch (error) {
-                console.log(error);
                 setValidUrl(false);
             }
         };
@@ -42,7 +46,7 @@ const EmailVerify = () => {
                     </div>
                 </div>
             ) : (
-                <h1 className="text-2xl font-black">404 Error</h1>
+                <ErrorPage />
             )}
         </>
     );

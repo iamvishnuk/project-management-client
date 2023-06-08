@@ -8,6 +8,8 @@ import ProtectRoutes from "../Components/User/ProtectRoutes/ProtectRoutes";
 import KanbanBoard from "../Pages/KanbanBoard";
 import PlanPricingPage from "../Pages/PlanPricingPage";
 import ForgotPassword from "../Pages/ForgotPassword";
+import ChangePassword from "../Pages/ChangePassword";
+import ErrorPage from "../Pages/ErrorPage";
 
 function UserRoutes() {
     return (
@@ -24,6 +26,8 @@ function UserRoutes() {
                 path="/user/:id/verify/:token"
                 element={<EmailVerificationPage />}
             />
+            <Route path="/change-password/:id/verify/:token" element={<ChangePassword />} />
+            <Route path="/*" element={<ErrorPage />} />
         </Routes>
     );
 }

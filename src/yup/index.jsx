@@ -19,3 +19,10 @@ export const createCategroySchem = Yup.object({
         .max(250)
         .required("Please enter the description"),
 });
+
+export const forgotPassword = Yup.object({
+    newPassword: Yup.string().min(8).required("Please enter your new password"),
+    confirmPassword: Yup.string()
+        .required("Please enter your new password againn")
+        .oneOf([Yup.ref("newPassword"), null], "Password does't match"),
+});

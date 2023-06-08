@@ -2,7 +2,9 @@ import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import { signUpSchema } from "../../../yup";
 import { userAxiosInstance } from "../../../axios/AxiosInstance";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import jwtDecode from "jwt-decode";
 
 const initialValues = {
     username: "",
@@ -12,6 +14,7 @@ const initialValues = {
 };
 
 function SignUpForm() {
+    const navigate = useNavigate()
     const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
         useFormik({
             initialValues: initialValues,
@@ -38,6 +41,26 @@ function SignUpForm() {
         } catch (error) {
             console.error(error.message);
         }
+    };
+
+    // google sigin functions
+    const responseMessage = async (response) => {
+        const userDetails = jwtDecode(response.credential);
+        try {
+            const { data,status } = await userAxiosInstance.post("/google-signup", userDetails, {
+                withCredentials: true,
+            });
+            if(status === 200) {
+                localStorage.setItem("userToken",data.token)
+                toast.success(data.message)
+                navigate("/kanban-board")
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const errorMessage = (error) => {
+        console.log(error);
     };
 
     return (
@@ -133,8 +156,13 @@ function SignUpForm() {
                         Log in
                     </Link>
                 </label>
+                <div className="flex justify-center mt-3">
+                    <GoogleLogin
+                        onSuccess={responseMessage}
+                        onError={errorMessage}
+                    />
+                </div>
             </div>
-            <ToastContainer />
         </>
     );
 }

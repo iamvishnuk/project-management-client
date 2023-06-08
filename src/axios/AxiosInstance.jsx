@@ -25,4 +25,4 @@ userAxiosInstance.interceptors.request.use(async (req) => {
 });
 
 export {userAxiosInstance} 
-// export const userApi = axios.create({ baseURL: `http://localhost:4000` });
+

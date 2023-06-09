@@ -63,7 +63,7 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
     return (
         <>
             <div className="overflow-x-auto">
-                <div className="p-2 overflow-auto rounded-lg shadow border-2">
+                <div className="p-2 rounded-lg shadow border-2">
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b-2 border-gray-200">
                             <tr>

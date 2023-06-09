@@ -10,6 +10,9 @@ import PlanPricingPage from "../Pages/PlanPricingPage";
 import ForgotPassword from "../Pages/ForgotPassword";
 import ChangePassword from "../Pages/ChangePassword";
 import ErrorPage from "../Pages/ErrorPage";
+import ProjectManagement from "../Pages/ProjectManagement";
+import CreateProject from "../Pages/CreateProject";
+
 
 function UserRoutes() {
     return (
@@ -21,6 +24,8 @@ function UserRoutes() {
                 <Route path="/manage-category" element={<ManageCeteogry />} />
                 <Route path="/kanban-board" element={<KanbanBoard />} />
                 <Route path="/plan-pricing" element={<PlanPricingPage />} />
+                <Route path="/project-management" element={<ProjectManagement />} />
+                <Route path="/create-project" element={<CreateProject />}/>
             </Route>
             <Route
                 path="/user/:id/verify/:token"

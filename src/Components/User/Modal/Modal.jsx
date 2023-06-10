@@ -1,6 +1,6 @@
 import React from "react";
 
-const AddCategoryModal = ({ isVisible, onClose, children }) => {
+const Modal = ({ isVisible, onClose, children }) => {
     if (!isVisible) return null;
     const handleClose = (e) => {
         if(e.target.id === "wrapper") onClose()
@@ -24,4 +24,4 @@ const AddCategoryModal = ({ isVisible, onClose, children }) => {
     );
 };
 
-export default AddCategoryModal;
+export default Modal;

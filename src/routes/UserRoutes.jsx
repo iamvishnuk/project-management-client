@@ -12,6 +12,8 @@ import ChangePassword from "../Pages/ChangePassword";
 import ErrorPage from "../Pages/ErrorPage";
 import ProjectManagement from "../Pages/ProjectManagement";
 import CreateProject from "../Pages/CreateProject";
+import ManageTeam from "../Pages/ManageTeam";
+import UserProfile from "../Pages/UserProfile";
 
 
 function UserRoutes() {
@@ -26,6 +28,8 @@ function UserRoutes() {
                 <Route path="/plan-pricing" element={<PlanPricingPage />} />
                 <Route path="/project-management" element={<ProjectManagement />} />
                 <Route path="/create-project" element={<CreateProject />}/>
+                <Route path="/manage-team" element={<ManageTeam />} />
+                <Route path="/user-profile" element={<UserProfile />} />
             </Route>
             <Route
                 path="/user/:id/verify/:token"

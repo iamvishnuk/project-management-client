@@ -84,7 +84,10 @@ const Sidebar = () => {
                             Category Management
                         </span>
                     </li>
-                    <li className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">
+                    <li
+                        onClick={() => navigate("/manage-team")}
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                    >
                         <div className="w-6 flex justify-center">
                             <i className="fa-solid fa-people-group text-xl"></i>
                         </div>
@@ -96,7 +99,7 @@ const Sidebar = () => {
                             Manage Team
                         </span>
                     </li>
-                    <li className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">
+                    <li onClick={() => navigate("/user-profile")} className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">
                         <div className="w-6 flex justify-center">
                             <i className="fa-solid fa-user text-xl"></i>
                         </div>

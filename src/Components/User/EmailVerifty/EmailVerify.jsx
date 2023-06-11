@@ -1,28 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { userAxiosInstance } from "../../../axios/AxiosInstance";
 import ErrorPage from "../../../Pages/ErrorPage";
+import { emailVerification } from "../../../Services/userApi";
 
 const EmailVerify = () => {
     const [validUrl, setValidUrl] = useState(false);
     const navigate = useNavigate();
     const params = useParams();
     useEffect(() => {
-        const verifyEmail = async () => {
-            try {
-                const url = `/user/${params.id}/verify/${params.token}`;
-                const { data } = await userAxiosInstance.get(url, { withCredentials: true });
-                console.log(data)
-                if(data.verified) {
-                    setValidUrl(true);
-                } else {
-                    setValidUrl(false)
-                }
-            } catch (error) {
+        emailVerification(params.id, params.token)
+            .then((res) => {
+                setValidUrl(true);
+            })
+            .catch((error) => {
                 setValidUrl(false);
-            }
-        };
-        verifyEmail();
+            });
     }, [params]);
     return (
         <>

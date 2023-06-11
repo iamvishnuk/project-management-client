@@ -1,33 +1,26 @@
 import React, { useState } from "react";
-import { userAxiosInstance } from "../axios/AxiosInstance";
-import { ToastContainer,toast } from "react-toastify";
-import {CgSpinner} from 'react-icons/cg'
+import { toast } from "react-toastify";
+import { CgSpinner } from "react-icons/cg";
+import { forgotPasswordSendEmail } from "../Services/userApi";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     const sendMail = async (e) => {
-        try {
-            e.preventDefault();
-            setLoading(!loading)
-            const { data } = await userAxiosInstance.get(
-                `/forgot-password/${email}`,
-                {
-                    withCredentials: true,
-                }
-            );
-            if(data) {
-                toast.success(data.message)
-                setLoading(false)
-            }
-        } catch(error) {
-            if (error.response && error.response.status === 404) {
-                toast.error(error.response.data.message)
-            } else {
-                console.log(error.message)
-            }
-        }
+        e.preventDefault();
+        setLoading(!loading);
+        forgotPasswordSendEmail(email)
+            .then((res) => {
+                console.log(res)
+                toast.success(res.data.message);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err)
+                toast.error(err.response.data.message);
+                setLoading(false);
+            });
     };
 
     return (
@@ -67,7 +60,12 @@ const ForgotPassword = () => {
                                         type="submit"
                                         className=" bg-blue-700 w-full h-11 border rounded-md text-white font-semibold flex justify-center items-center"
                                     >
-                                        {loading && <CgSpinner size={20} className="animate-spin mt-1" />}
+                                        {loading && (
+                                            <CgSpinner
+                                                size={20}
+                                                className="animate-spin mt-1"
+                                            />
+                                        )}
                                         Send Mail
                                     </button>
                                 </form>
@@ -76,7 +74,6 @@ const ForgotPassword = () => {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
         </>
     );
 };

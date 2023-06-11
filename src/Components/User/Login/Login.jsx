@@ -4,73 +4,45 @@ import { userAxiosInstance } from "../../../axios/AxiosInstance";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import jwtDecode from "jwt-decode";
+import { userLogin, loginWithGoogle } from "../../../Services/userApi";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailRequried, setEmailRequired] = useState(false);
     const [passwordRequried, setPasswordRequired] = useState(false);
-
     const navigate = useNavigate();
+
 
     const login = async (e) => {
         e.preventDefault();
-        try {
-            if (email === "") {
-                setEmailRequired(true);
-            } else if (password === "") {
-                setPasswordRequired(true);
-            } else {
-                await userAxiosInstance
-                    .post(
-                        "/",
-                        {
-                            email: email,
-                            password: password,
-                        },
-                        {
-                            withCredentials: true,
-                        }
-                    )
-                    .then((res) => {
-                        localStorage.setItem("userToken", res.data.token);
-                        toast.success(res.data.message);
-                        navigate("/kanban-board");
-                    });
-            }
-        } catch (error) {
-            console.log(error);
-            if (error.response && error.response.status === 404) {
-                toast.error(error.response.data.message);
-            } else {
-                console.log(error.message);
-            }
+        if (email === "") {
+            setEmailRequired(true);
+        } else if (password === "") {
+            setPasswordRequired(true);
+        } else {
+            userLogin({email:email, password: password}).then(res => {
+                localStorage.setItem("userToken",res.data.token)
+                toast.success(res.data.message)
+                navigate("/kanban-board")
+            }).catch(error => {
+                toast.error(error.response.data.message)
+            })
         }
     };
 
     // google sigin function
     const responseMessage = async (response) => {
         const userDetails = jwtDecode(response.credential);
-        try {
-            console.log("function called")
-            const { data, status } = await userAxiosInstance.post(
-                "/google-login",
-                userDetails,
-                { withCredentials: true }
-            );
-            if(status === 200) {
-                localStorage.setItem("userToken",data.token)
-                toast.success(data.message)
-                navigate("/kanban-board")
-            }
-        } catch (error) {
-            console.log(error);
-            if(error.response && error.response.status === 404) {
-                toast.error(error.response.data.message)
-            } else {
-                console.log(error.message)
-            }
-        }
+        loginWithGoogle(userDetails)
+            .then((res) => {
+                localStorage.setItem("userToken", res.data.token);
+                toast.success(res.data.message);
+                navigate("/kanban-board");
+            })
+            .catch((error) => {
+                toast.error(error.response.data.message);
+            });
     };
 
     const errorMessage = (error) => {

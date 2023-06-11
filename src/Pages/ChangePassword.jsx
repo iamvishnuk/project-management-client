@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { forgotPassword } from "../yup";
+import { forgotPasswordSchema } from "../yup";
 import ErrorPage from "./ErrorPage";
 import { useParams } from "react-router-dom";
-import { userAxiosInstance } from "../axios/AxiosInstance";
+import { verifyChangePasswordUrl, forgotPassword } from "../Services/userApi";
 
 const initialValues = {
     newPassword: "",
@@ -15,50 +15,41 @@ const ChangePassword = () => {
     const [validUrl, setValidUrl] = useState(false);
     const params = useParams();
     useEffect(() => {
-        const verifyUrl = async () => {
-            try {
-                const url = `/change-password/${params.id}/verify/${params.token}`;
-                const { data } = await userAxiosInstance.get(url, {
-                    withCredentials: true,
-                });
-                console.log(data);
-                if (data.auth) {
-                    setValidUrl(true);
-                } else {
-                    setValidUrl(false);
-                }
-            } catch (error) {
-                console.log(error.message);
+        verifyChangePasswordUrl(params.id, params.token)
+            .then((res) => {
+                setValidUrl(true);
+            })
+            .catch((error) => {
                 setValidUrl(false);
-            }
-        };
-        verifyUrl();
+            });
     }, [params]);
 
     const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
         useFormik({
             initialValues: initialValues,
-            validationSchema: forgotPassword,
+            validationSchema: forgotPasswordSchema,
             onSubmit: () => {
-                ChangePassword();
+                changePassword();
             },
         });
 
-    const ChangePassword = async () => {
-        try {
-            const { data } = await userAxiosInstance.post(
-                `/change-password/${params.id}`,
-                values,
-                { withCredentials: true }
-            );
-            if (data.updated) {
-                toast.success(data.message);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.log(error);
-        }
+    const changePassword = async () => {
+        forgotPassword(params.id, values)
+            .then((response) => {
+                toast.success(response.data.message)
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 304) {
+                    toast.error(
+                        "New password and the old password are the same"
+                    );
+                } else {
+                    const message = error.response
+                        ? error.response.data.message
+                        : "Network error";
+                    toast.error(message);
+                }
+            });
     };
 
     return (

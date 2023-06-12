@@ -1,25 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { userAxiosInstance } from "../../../axios/AxiosInstance";
+import { isAuthUser } from "../../../Services/userApi";
+import { toast } from "react-toastify";
 
 const ProtectRoutes = ({ route }) => {
     const [auth, setAuth] = useState(null);
 
     useEffect(() => {
         const isUserAuth = async () => {
-            try {
-                await userAxiosInstance.get("/is-auth-user", {
-                    withCredentials: true,
-                }).then(res => {
-                    console.log(res)
-                    setAuth(res.data.auth)
-                }).catch(err => {
-                    setAuth(false)
-                    localStorage.removeItem("userToken")
+            isAuthUser()
+                .then((res) => {
+                    console.log(res);
+                    setAuth(res.data.auth);
                 })
-            } catch (error) {
-                console.log(error.response);
-            }
+                .catch((err) => {
+                    setAuth(false);
+                    localStorage.removeItem("userToken");
+                });
         };
         isUserAuth();
     }, []);

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Modal from "../../../Components/User/Modal/Modal";
-import { userAxiosInstance } from "../../../axios/AxiosInstance";
 import { toast } from "react-toastify";
 import dateFormat from "dateformat";
+import { editCategory, deleteCategory } from "../../../Services/userApi";
 
 const MangeCategoryTable = ({ categoryData, onDelete }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -11,23 +11,16 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
     const [editValue, setEditValue] = useState(null);
 
     // function for delete the category
-    const deleteCategory = async () => {
-        try {
-            const { data } = await userAxiosInstance.get(
-                `/delete-category/${deleteCategoryId}`,
-                {
-                    withCredentials: true,
-                }
-            );
-            if (data.delete) {
-                console.log("delete if condition");
-                toast.success(data.message);
+    const categoryDelete = async () => {
+        deleteCategory(deleteCategoryId)
+            .then((res) => {
+                toast.success(res.data.message);
                 setShowDeleteModal(false);
                 onDelete();
-            }
-        } catch (error) {
-            console.log(error.message);
-        }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     // for changing the value in the category edit state
@@ -40,24 +33,17 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
     };
 
     //funtion for editing the category
-    const editCategory = async (e) => {
-        e.preventDefault()
-        try {
-            const { data } = await userAxiosInstance.post(
-                "/edit-category",
-                editValue,
-                { withCredentials: true }
-            );
-            if(data.update) {
+    const edit = async (e) => {
+        e.preventDefault();
+        editCategory(editValue)
+            .then((res) => {
                 setShowEditeModal(false);
-                toast.success(data.message)
-                onDelete()
-            } else {
-                toast.error(data.message)
-            }
-        } catch (error) {
-            console.log(error);
-        }
+                toast.success(res.data.message);
+                onDelete();
+            })
+            .catch((error) => {
+                toast.error(error.response.data.message);
+            });
     };
 
     return (
@@ -146,7 +132,7 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                             You won't be able to revert this!
                         </h2>
                         <button
-                            onClick={deleteCategory}
+                            onClick={categoryDelete}
                             className="bg-sky-500 py-2 px-4 border-gray border-opacity-30 text-white font-light text-xl rounded-lg border-4 mr-2"
                         >
                             Yes, delete it!
@@ -206,7 +192,7 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                             </div>
                             <div className="flex justify-end">
                                 <button
-                                    onClick={editCategory}
+                                    onClick={edit}
                                     className="flex border py-2 px-4 rounded-lg bg-blue-700 bg-opacity-75 font-medium text-white"
                                 >
                                     Update

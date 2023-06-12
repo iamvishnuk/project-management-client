@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
-import { userAxiosInstance } from "../../../axios/AxiosInstance";
+import {
+    getMembersAndCategory,
+    createProject,
+} from "../../../Services/userApi";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CreateProjectFrom = () => {
     const [category, setCategory] = useState([]);
     const [members, setMembers] = useState([]);
+    const navigate = useNavigate()
 
+    const [projectDetails, setProjectDetails] = useState({
+        projectName: "",
+        projectCategory: "",
+        projectUrl: "",
+        projectLead: "",
+        description: "",
+    });
+
+    //for getting the member and category detail for the create project
     const getData = async () => {
-        await userAxiosInstance
-            .get("/get-member-and-category", { withCredentials: true })
+        getMembersAndCategory()
             .then((res) => {
-                console.log(res.data);
                 setCategory(res.data.categoryDetails);
                 setMembers(res.data.memberDetails);
             })
@@ -18,7 +31,18 @@ const CreateProjectFrom = () => {
             });
     };
 
-    console.log( category)
+    //for creating new project
+    const create = (e) => {
+        e.preventDefault();
+        createProject(projectDetails)
+            .then((res) => {
+                toast.success(res.data.message)
+                navigate("/project-management");
+            })
+            .catch((error) => {
+                toast.error(error.response.data.message)
+            });
+    };
 
     useEffect(() => {
         getData();
@@ -30,97 +54,127 @@ const CreateProjectFrom = () => {
                 <form>
                     <div className="mb-6">
                         <label
-                            htmlFor="email"
+                            htmlFor="projectName"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
                             Project Name
                         </label>
                         <input
-                            type="email"
-                            id="email"
+                            type="text"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Enter your project name"
-                            required
+                            name="projectName"
+                            onChange={(e) =>
+                                setProjectDetails({
+                                    ...projectDetails,
+                                    [e.target.name]: e.target.value,
+                                })
+                            }
                         />
                     </div>
                     <div className="mb-6">
                         <label
-                            htmlFor="password"
+                            htmlFor="projectCategory"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
                             Project Category
                         </label>
                         <select
-                            id="countries"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            defaultValue={"choose a category"}
-                        >
-                            {
-                                category.map((items, index) => {
-                                    return (
-
-                                        <option key={index} value="US">{items.categoryName}</option>
-                                    )
+                            name="projectCategory"
+                            onChange={(e) =>
+                                setProjectDetails({
+                                    ...projectDetails,
+                                    [e.target.name]: e.target.value,
                                 })
                             }
+                            defaultChecked
+                        >
+                            <option value={""} selected>
+                                Please select the category
+                            </option>
+                            {category.map((items, index) => {
+                                return (
+                                    <option key={index} value={items._id}>
+                                        {items.categoryName}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </div>
                     <div className="mb-6">
                         <label
-                            htmlFor="email"
+                            htmlFor="projectUrl"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
                             Project URL
                         </label>
                         <input
-                            type="email"
-                            id="email"
+                            type="url"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder=""
-                            required
+                            name="projectUrl"
+                            onChange={(e) =>
+                                setProjectDetails({
+                                    ...projectDetails,
+                                    [e.target.name]: e.target.value,
+                                })
+                            }
                         />
                     </div>
                     <div className="mb-6">
                         <label
-                            htmlFor="password"
+                            htmlFor="projectlead"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
                             Project Lead
                         </label>
                         <select
-                            id="countries"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        >
-                            {/* <option selected>Choose a Category</option> */}
-                            {
-                                members.map((member, index) => {
-                                    return (
-                                        <option key={index} value="US">{member.userName}</option>
-                                    )
+                            name="projectLead"
+                            onChange={(e) =>
+                                setProjectDetails({
+                                    ...projectDetails,
+                                    [e.target.name]: e.target.value,
                                 })
                             }
-                            {/* <option value="CA">Canada</option>
-                            <option value="FR">France</option>
-                            <option value="DE">Germany</option> */}
+                        >
+                            <option value={""} selected>
+                                Please select the project lead
+                            </option>
+                            {members.map((member, index) => {
+                                return (
+                                    <option key={index} value={member._id}>
+                                        {member.userName}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </div>
                     <div className="mb-6">
                         <label
-                            htmlFor="message"
+                            htmlFor="description"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
                             Description
                         </label>
                         <textarea
-                            id="message"
                             rows="4"
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Write about your project..."
+                            name="description"
+                            onChange={(e) =>
+                                setProjectDetails({
+                                    ...projectDetails,
+                                    [e.target.name]: e.target.value,
+                                })
+                            }
                         ></textarea>
                     </div>
                     <button
                         type="submit"
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={create}
                     >
                         Submit
                     </button>

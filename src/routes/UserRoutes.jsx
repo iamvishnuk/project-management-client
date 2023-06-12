@@ -14,6 +14,7 @@ import ProjectManagement from "../Pages/ProjectManagement";
 import CreateProject from "../Pages/CreateProject";
 import ManageTeam from "../Pages/ManageTeam";
 import UserProfile from "../Pages/UserProfile";
+import EditProject from "../Pages/EditProject";
 
 
 function UserRoutes() {
@@ -30,6 +31,7 @@ function UserRoutes() {
                 <Route path="/create-project" element={<CreateProject />}/>
                 <Route path="/manage-team" element={<ManageTeam />} />
                 <Route path="/user-profile" element={<UserProfile />} />
+                <Route path="/edit-project/:id" element={<EditProject />} />
             </Route>
             <Route
                 path="/user/:id/verify/:token"

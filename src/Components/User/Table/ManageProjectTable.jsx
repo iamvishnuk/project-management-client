@@ -1,83 +1,148 @@
-import React from 'react'
+import React, { useEffect } from "react";
+import { getAllProjectDetail, deleteProject } from "../../../Services/userApi";
+import { useState } from "react";
+import { AiFillDelete } from "react-icons/ai";
+import { BiEdit } from "react-icons/bi";
+import Modal from "../Modal/Modal";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ManageProjectTable = () => {
-  return (
-      <>
-          <div className="relative overflow-x-auto border-2 rounded-lg">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                      <tr>
-                          <th scope="col" className="px-6 py-3">
-                              No
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              Project Name
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              Category
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              Members
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              created at
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              lead
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              action
-                          </th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                          <th
-                              scope="row"
-                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                          >
-                              Apple MacBook Pro 17"
-                          </th>
-                          <td className="px-6 py-4">Silver</td>
-                          <td className="px-6 py-4">Laptop</td>
-                          <td className="px-6 py-4">$2999</td>
-                          <td className="px-6 py-4">$2999</td>
-                          <td className="px-6 py-4">$2999</td>
-                          <td className="px-6 py-4">$2999</td>
-                      </tr>
-                      <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                          <th
-                              scope="row"
-                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                          >
-                              Microsoft Surface Pro
-                          </th>
-                          <td className="px-6 py-4">White</td>
-                          <td className="px-6 py-4">Laptop PC</td>
-                          <td className="px-6 py-4">$1999</td>
-                          <td className="px-6 py-4">$1999</td>
-                          <td className="px-6 py-4">$1999</td>
-                          <td className="px-6 py-4">$1999</td>
-                      </tr>
-                      <tr className="bg-white dark:bg-gray-800">
-                          <th
-                              scope="row"
-                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                          >
-                              Magic Mouse 2
-                          </th>
-                          <td className="px-6 py-4">Black</td>
-                          <td className="px-6 py-4">Accessories</td>
-                          <td className="px-6 py-4">$99</td>
-                          <td className="px-6 py-4">$99</td>
-                          <td className="px-6 py-4">$99</td>
-                          <td className="px-6 py-4">$99</td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-      </>
-  );
-}
+    const [projectDetails, setProjectDetails] = useState([]);
+    const [deleteModal, showDeleteModal] = useState(false);
+    const [deleteCategoryId, setDeleteCategoryId] = useState("");
+    const navigate = useNavigate()
+    // for getting the all project data
+    const getData = () => {
+        getAllProjectDetail()
+            .then((res) => {
+                setProjectDetails(res.data.projectDetails);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
-export default ManageProjectTable
+    useEffect(() => {
+        getData()
+    }, []);
+
+    const projectDelete = () => {
+        deleteProject(deleteCategoryId)
+            .then((res) => {
+                console.log(res)
+                toast.success(res.data.message)
+                showDeleteModal(false)
+                getData()
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    return (
+        <>
+            <div className="relative overflow-x-auto border-2 rounded-lg">
+                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" className="px-6 py-3">
+                                No
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Project Name
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Category
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                lead
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {projectDetails.map((project, index) => {
+                            return (
+                                <tr
+                                    key={index}
+                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                                >
+                                    <td className="px-6 py-4">{index + 1}</td>
+                                    <th
+                                        scope="row"
+                                        className="px-6 py-4 font-medium text-blue-700 whitespace-nowrap dark:text-white underline"
+                                    >
+                                        {project.projectName}
+                                    </th>
+                                    <td className="px-6 py-4">
+                                        {project.projectCategory.categoryName}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {project.projectLead.userName}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button
+                                            onClick={() => {
+                                                showDeleteModal(true);
+                                                setDeleteCategoryId(
+                                                    project._id
+                                                );
+                                            }}
+                                            className="mr-1"
+                                        >
+                                            <AiFillDelete
+                                                size={22}
+                                                color="red"
+                                            />
+                                        </button>
+                                        <button
+                                            className="mr-1"
+                                            onClick={() =>
+                                                navigate(`/edit-project/${project._id}`)
+                                            }
+                                        >
+                                            <BiEdit size={22} color="blue" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+            <Modal
+                isVisible={deleteModal}
+                onClose={() => showDeleteModal(false)}
+            >
+                <div className="w-[600px] p-7">
+                    <div className="text-center py-6">
+                        <i className="fa-solid fa-trash text-red-600 text-5xl"></i>
+                        <h2 className="text-4xl text-gray-500 font-normal mt-10 mb-8">
+                            Are you sure ?
+                        </h2>
+                        <h2 className="font-light text-2xl my-8">
+                            You won't be able to revert this!
+                        </h2>
+                        <button
+                            onClick={projectDelete}
+                            className="bg-sky-500 py-2 px-4 border-gray border-opacity-30 text-white font-light text-xl rounded-lg border-4 mr-2"
+                        >
+                            Yes, delete it!
+                        </button>
+                        <button
+                            onClick={() => showDeleteModal(false)}
+                            className="bg-red-600 py-2 px-4 border-gray border-opacity-30 text-white font-light text-xl rounded-lg border-4 ml-2"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+        </>
+    );
+};
+
+export default ManageProjectTable;

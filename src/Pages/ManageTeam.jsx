@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../Components/User/Sidebar/Sidebar";
 import Modal from "../Components/User/Modal/Modal";
-import { userAxiosInstance } from "../axios/AxiosInstance";
 import { toast } from "react-toastify";
+import { getAllPeople, sendInviteMail } from "../Services/userApi";
 
 const ManageTeam = () => {
     const [addPeopleModal, setAddPeopleModal] = useState(false);
@@ -10,8 +10,7 @@ const ManageTeam = () => {
     const [people, setPeople] = useState([]);
 
     const getPeople = async () => {
-        await userAxiosInstance
-            .get("/get-all-people", { withCredentials: true })
+        getAllPeople()
             .then((res) => {
                 setPeople(res.data.peopleData);
             })
@@ -23,19 +22,13 @@ const ManageTeam = () => {
         getPeople();
     }, []);
 
-    const SendInviteMail = async () => {
-        await userAxiosInstance
-            .post(
-                "/send-invite-mail",
-                { email: email },
-                {
-                    withCredentials: true,
-                }
-            )
+    // for adding new people to team
+    const addPeople = async () => {
+        sendInviteMail({ email: email })
             .then((res) => {
-                console.log(res);
                 toast.success(res.data.message);
                 setAddPeopleModal(false);
+                getPeople()
             })
             .catch((err) => {
                 toast.error(err.response.data.message);
@@ -142,7 +135,7 @@ const ManageTeam = () => {
                         </button>
                         <button
                             className="rounded-md font-medium py-2 px-3 bg-blue-600 text-white hover:bg-blue-700"
-                            onClick={SendInviteMail}
+                            onClick={addPeople}
                         >
                             Add
                         </button>

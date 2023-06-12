@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import Modal from "../Components/User/Modal/Modal";
 import Sidebar from "../Components/User/Sidebar/Sidebar";
 import MangeCategoryTable from "../Components/User/Table/ManageCategoryTable";
-import { userAxiosInstance } from "../axios/AxiosInstance";
 import { useFormik } from "formik";
 import { createCategroySchem } from "../yup";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { getCategory, createCategory } from "../Services/userApi";
 
 const initialValues = {
     categoryName: "",
@@ -21,37 +21,24 @@ const ManageCeteogry = () => {
             initialValues: initialValues,
             validationSchema: createCategroySchem,
             onSubmit: (values, action) => {
-                createCategory();
+                create();
                 action.resetForm();
             },
         });
 
-    const createCategory = async () => {
-        try {
-            const { data, status } = await userAxiosInstance.post(
-                "/create-category",
-                values,
-                {
-                    withCredentials: true,
-                }
-            );
-            if (status === 201) {
+    const create = async () => {
+        createCategory(values)
+            .then((res) => {
                 setShowModal(false);
-                toast.success(data.message);
-            }
-        } catch (error) {
-            console.log(error.response.data.message);
-            if (error.response && error.response.status === 422) {
-                toast.error(error.response.data.message);
-            } else {
-                console.log(error.message);
-            }
-        }
+                toast.success(res.data.message);
+            })
+            .catch((error) => {
+                toast.warning(error.response.data.message);
+            });
     };
 
     const getCategoryDetail = async () => {
-        await userAxiosInstance
-            .get("/get-category-data")
+        getCategory()
             .then((response) => {
                 console.log(response);
                 setCategoryData(response.data.data);
@@ -68,7 +55,9 @@ const ManageCeteogry = () => {
             <div className="flex">
                 <Sidebar />
                 <div className="bg-white p-10 font-semibold flex-1 h-screen">
-                    <h1 className="text-2xl font-bold">Manage Project Category</h1>
+                    <h1 className="text-2xl font-bold">
+                        Manage Project Category
+                    </h1>
                     <div className="mt-3 mb-3 w-full flex justify-end">
                         <button
                             className="bg-btn-green text-white font-medium px-3 py-1 rounded-md"
@@ -142,7 +131,6 @@ const ManageCeteogry = () => {
                     </div>
                 </div>
             </Modal>
-            <ToastContainer />
         </>
     );
 };

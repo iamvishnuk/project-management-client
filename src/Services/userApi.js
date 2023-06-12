@@ -22,19 +22,71 @@ const emailVerification = (id, token) => {
 }
 
 const forgotPasswordSendEmail = (email) => {
-    return userAxiosInstance.get(`/forgot-password/${email}`,{withCredentials: true})
+    return userAxiosInstance.get(`/forgot-password/${email}`, { withCredentials: true })
 }
 
 const verifyChangePasswordUrl = (id, token) => {
-    return userAxiosInstance.get(`/change-password/${id}/verify/${token}`,{withCredentials: true})
+    return userAxiosInstance.get(`/change-password/${id}/verify/${token}`, { withCredentials: true })
 }
 
 const forgotPassword = (id, value) => {
-    return userAxiosInstance.post(`/change-password/${id}`,value,{withCredentials: true})
+    return userAxiosInstance.post(`/change-password/${id}`, value, { withCredentials: true })
+}
+
+const isAuthUser = () => {
+    return userAxiosInstance.get("/is-auth-user", { withCredentials: true })
 }
 
 
 // api related to project category
+const getCategory = () => {
+    return userAxiosInstance.get('/get-category-data', { withCredentials: true })
+}
+
+const createCategory = (value) => {
+    return userAxiosInstance.post("/create-category", value, { withCredentials: true })
+}
+
+const editCategory = (value) => {
+    return userAxiosInstance.post("/edit-category", value, { withCredentials: true })
+}
+const deleteCategory = (id) => {
+    return userAxiosInstance.get(`/delete-category/${id}`, { withCredentials: true })
+}
+
+// api related to team management
+const getAllPeople = () => {
+    return userAxiosInstance.get("/get-all-people", { withCredentials: true })
+}
+
+const sendInviteMail = (email) => {
+    return userAxiosInstance.post("/send-invite-mail", email, { withCredentials: true })
+}
+
+// apit related to project management
+const getMembersAndCategory = () => {
+    return userAxiosInstance.get("/get-member-and-category", { withCredentials: true })
+}
+
+const createProject = (values) => {
+    return userAxiosInstance.post("/create-project", values, { withCredentials: true })
+}
+
+const getAllProjectDetail = () => {
+    return userAxiosInstance.get("/get-all-project", { withCredentials: true })
+}
+
+
+const deleteProject = (id) => {
+    return userAxiosInstance.get(`/delete-project/${id}`, { withCredentials: true })
+}
+
+const getEditProjectDetails = (id) => {
+    return userAxiosInstance.get(`/get-edit-project-details/${id}`, { withCredentials: true })
+}
+
+
+
 
 export {
     userRegisteration,
@@ -44,5 +96,17 @@ export {
     emailVerification,
     forgotPasswordSendEmail,
     verifyChangePasswordUrl,
-    forgotPassword
+    forgotPassword,
+    isAuthUser,
+    getCategory,
+    createCategory,
+    editCategory,
+    deleteCategory,
+    getAllPeople,
+    sendInviteMail,
+    getMembersAndCategory,
+    createProject,
+    getAllProjectDetail,
+    deleteProject,
+    getEditProjectDetails
 }

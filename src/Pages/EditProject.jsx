@@ -1,17 +1,18 @@
 import Sidebar from "../Components/User/Sidebar/Sidebar";
-import CreateProjectForm from "../Components/User/forms/CreateProjectForm";
+import React from "react";
+import EditProjectForm from "../Components/User/forms/EditProjectForm";
 
-const CreateProject = () => {
+const EditProject = () => {
     return (
         <>
             <div className="flex">
-                <Sidebar/>
+                <Sidebar />
                 <div className="p-10 h-screen overflow-auto flex-1">
                     <div className="mb-4">
-                        <h1 className="text-2xl font-bold">Create Project</h1>
+                        <h1 className="text-2xl font-bold">Edit Project Details</h1>
                     </div>
                     <div>
-                        <CreateProjectForm />
+                        <EditProjectForm />
                     </div>
                 </div>
             </div>
@@ -19,4 +20,4 @@ const CreateProject = () => {
     );
 };
 
-export default CreateProject;
+export default EditProject;

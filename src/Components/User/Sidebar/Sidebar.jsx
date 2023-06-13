@@ -40,21 +40,6 @@ const Sidebar = () => {
                 <hr className="mt-5" />
                 <ul className="pt-6 text-black font-medium">
                     <li
-                        onClick={() => navigate("/kanban-board")}
-                        className="mt-2 text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
-                    >
-                        <div className="w-6 flex justify-center">
-                            <i className="fa-solid fa-list-check text-xl"></i>
-                        </div>
-                        <span
-                            className={`${
-                                !open && "hidden"
-                            } orign-left duration-200`}
-                        >
-                            Kanban Board
-                        </span>
-                    </li>
-                    <li
                         onClick={() => navigate("/project-management")}
                         className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
                     >

@@ -5,7 +5,6 @@ import SignUpPage from "../Pages/SignUpPage";
 import ManageCeteogry from "../Pages/ManageCeteogry";
 import EmailVerificationPage from "../Pages/EmailVerificationPage";
 import ProtectRoutes from "../Components/User/ProtectRoutes/ProtectRoutes";
-import KanbanBoard from "../Pages/KanbanBoard";
 import PlanPricingPage from "../Pages/PlanPricingPage";
 import ForgotPassword from "../Pages/ForgotPassword";
 import ChangePassword from "../Pages/ChangePassword";
@@ -15,6 +14,9 @@ import CreateProject from "../Pages/CreateProject";
 import ManageTeam from "../Pages/ManageTeam";
 import UserProfile from "../Pages/UserProfile";
 import EditProject from "../Pages/EditProject";
+import ProjectManagementLayout from "../Layout/ProjectManagementLayout";
+import Board from "../Pages/Board";
+import ManageAccess from "../Pages/ManageAccess";
 
 
 function UserRoutes() {
@@ -25,19 +27,28 @@ function UserRoutes() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route element={<ProtectRoutes route={"/"} />}>
                 <Route path="/manage-category" element={<ManageCeteogry />} />
-                <Route path="/kanban-board" element={<KanbanBoard />} />
                 <Route path="/plan-pricing" element={<PlanPricingPage />} />
-                <Route path="/project-management" element={<ProjectManagement />} />
-                <Route path="/create-project" element={<CreateProject />}/>
+                <Route
+                    path="/project-management"
+                    element={<ProjectManagement />}
+                />
+                <Route path="/create-project" element={<CreateProject />} />
                 <Route path="/manage-team" element={<ManageTeam />} />
                 <Route path="/user-profile" element={<UserProfile />} />
                 <Route path="/edit-project/:id" element={<EditProject />} />
+                <Route element={<ProjectManagementLayout />}>
+                    <Route path="/project-management/:name/board" element={<Board />} />
+                    <Route path="/project-management/manage-access" element={<ManageAccess />} />
+                </Route>
             </Route>
             <Route
                 path="/user/:id/verify/:token"
                 element={<EmailVerificationPage />}
             />
-            <Route path="/change-password/:id/verify/:token" element={<ChangePassword />} />
+            <Route
+                path="/change-password/:id/verify/:token"
+                element={<ChangePassword />}
+            />
             <Route path="/*" element={<ErrorPage />} />
         </Routes>
     );

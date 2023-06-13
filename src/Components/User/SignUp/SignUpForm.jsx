@@ -46,7 +46,7 @@ function SignUpForm() {
         signupWithGoogle(userDetails).then(res => {
             localStorage.setItem("userToken",res.data.token)
             toast.success(res.data.message)
-            navigate("/kanban-board");
+            navigate("/project-management");
         }).catch(error => {
             console.log(error)
         })

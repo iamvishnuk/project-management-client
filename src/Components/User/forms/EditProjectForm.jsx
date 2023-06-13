@@ -2,17 +2,18 @@ import React, { useEffect } from "react";
 import {
     getEditProjectDetails,
     getMembersAndCategory,
+    editProject,
 } from "../../../Services/userApi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const EditProjectForm = () => {
     const params = useParams();
     const [projectDetails, setProjectDetails] = useState(null);
     const [members, setMembers] = useState([]);
     const [category, setCategory] = useState([]);
-
-    console.log(members,category)
+    const navigate = useNavigate();
 
     // for getting the data for edit project details
     useEffect(() => {
@@ -32,6 +33,29 @@ const EditProjectForm = () => {
                 console.log(error);
             });
     }, []);
+
+    // for handling the changes in the input
+    const handleInput = (e) => {
+        const { name, value } = e.target;
+        setProjectDetails((preValue) => ({
+            ...preValue,
+            [name]: value,
+        }));
+    };
+
+    // edit function
+    const edit = (e) => {
+        e.preventDefault();
+        editProject(projectDetails)
+            .then((res) => {
+                console.log(res);
+                toast.success(res.data.message);
+                navigate("/project-management");
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
     return (
         <>
@@ -54,6 +78,7 @@ const EditProjectForm = () => {
                                     ? ""
                                     : projectDetails.projectName
                             }
+                            onChange={handleInput}
                         />
                     </div>
                     <div className="mb-6">
@@ -66,6 +91,7 @@ const EditProjectForm = () => {
                         <select
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             name="projectCategory"
+                            onChange={handleInput}
                         >
                             <option
                                 value={
@@ -80,6 +106,19 @@ const EditProjectForm = () => {
                                     : projectDetails.projectCategory
                                           .categoryName}
                             </option>
+                            {category
+                                .filter(
+                                    (items) =>
+                                        items._id !==
+                                        projectDetails.projectCategory._id
+                                )
+                                .map((items, index) => {
+                                    return (
+                                        <option key={index} value={items._id}>
+                                            {items.categoryName}
+                                        </option>
+                                    );
+                                })}
                         </select>
                     </div>
                     <div className="mb-6">
@@ -99,6 +138,7 @@ const EditProjectForm = () => {
                                     ? ""
                                     : projectDetails.projectUrl
                             }
+                            onChange={handleInput}
                         />
                     </div>
                     <div className="mb-6">
@@ -111,6 +151,7 @@ const EditProjectForm = () => {
                         <select
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             name="projectLead"
+                            onChange={handleInput}
                         >
                             <option
                                 value={
@@ -124,6 +165,19 @@ const EditProjectForm = () => {
                                     ? ""
                                     : projectDetails.projectLead.userName}
                             </option>
+                            {members
+                                .filter(
+                                    (member) =>
+                                        member._id !==
+                                        projectDetails.projectLead._id
+                                )
+                                .map((member, index) => {
+                                    return (
+                                        <option key={index} value={member._id}>
+                                            {member.userName}
+                                        </option>
+                                    );
+                                })}
                         </select>
                     </div>
                     <div className="mb-6">
@@ -143,11 +197,13 @@ const EditProjectForm = () => {
                                     ? ""
                                     : projectDetails.description
                             }
+                            onChange={handleInput}
                         ></textarea>
                     </div>
                     <button
                         type="submit"
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={edit}
                     >
                         Submit
                     </button>

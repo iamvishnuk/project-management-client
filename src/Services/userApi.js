@@ -76,7 +76,6 @@ const getAllProjectDetail = () => {
     return userAxiosInstance.get("/get-all-project", { withCredentials: true })
 }
 
-
 const deleteProject = (id) => {
     return userAxiosInstance.get(`/delete-project/${id}`, { withCredentials: true })
 }
@@ -85,7 +84,17 @@ const getEditProjectDetails = (id) => {
     return userAxiosInstance.get(`/get-edit-project-details/${id}`, { withCredentials: true })
 }
 
+const editProject = (values) => {
+    return userAxiosInstance.post("/edit-project",values, {withCredentials: true})
+}
 
+const getMembers = () => {
+    return userAxiosInstance.get("/get-member",{withCredentials: true})
+}
+
+const giveAccessToProject = (value) => {
+    return userAxiosInstance.post("/give-access",value,{withCredentials: true})
+}
 
 
 export {
@@ -108,5 +117,8 @@ export {
     createProject,
     getAllProjectDetail,
     deleteProject,
-    getEditProjectDetails
+    getEditProjectDetails,
+    editProject,
+    getMembers,
+    giveAccessToProject
 }

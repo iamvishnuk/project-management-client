@@ -23,7 +23,7 @@ function Login() {
             userLogin({email:email, password: password}).then(res => {
                 localStorage.setItem("userToken",res.data.token)
                 toast.success(res.data.message)
-                navigate("/kanban-board")
+                navigate("/project-management");
             }).catch(error => {
                 toast.error(error.response.data.message)
             })
@@ -37,7 +37,7 @@ function Login() {
             .then((res) => {
                 localStorage.setItem("userToken", res.data.token);
                 toast.success(res.data.message);
-                navigate("/kanban-board");
+                navigate("/project-management");
             })
             .catch((error) => {
                 toast.error(error.response.data.message);

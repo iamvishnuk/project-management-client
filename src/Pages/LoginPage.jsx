@@ -7,7 +7,7 @@ function LoginPage() {
   useEffect(() => {
     const token = localStorage.getItem("userToken")
     if(token) {
-      navigate("/kanban-board");
+      navigate("/project-management");
     }
   },[])
   return <Login />

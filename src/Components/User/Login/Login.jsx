@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import jwtDecode from "jwt-decode";
 import { userLogin, loginWithGoogle } from "../../../Services/userApi";
+import { useDispatch } from "react-redux";
+import { changeUserDetails } from "../../../Redux/UserSlice";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -11,7 +13,7 @@ function Login() {
     const [emailRequried, setEmailRequired] = useState(false);
     const [passwordRequried, setPasswordRequired] = useState(false);
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
 
     const login = async (e) => {
         e.preventDefault();
@@ -20,13 +22,16 @@ function Login() {
         } else if (password === "") {
             setPasswordRequired(true);
         } else {
-            userLogin({email:email, password: password}).then(res => {
-                localStorage.setItem("userToken",res.data.token)
-                toast.success(res.data.message)
-                navigate("/project-management");
-            }).catch(error => {
-                toast.error(error.response.data.message)
-            })
+            userLogin({ email: email, password: password })
+                .then((res) => {
+                    localStorage.setItem("userToken", res.data.token);
+                    dispatch(changeUserDetails({ userId: res.data.userId }));
+                    toast.success(res.data.message);
+                    navigate("/project-management");
+                })
+                .catch((error) => {
+                    toast.error(error.response.data.message);
+                });
         }
     };
 
@@ -36,6 +41,7 @@ function Login() {
         loginWithGoogle(userDetails)
             .then((res) => {
                 localStorage.setItem("userToken", res.data.token);
+                dispatch(changeUserDetails({ userId: res.data.userId }));
                 toast.success(res.data.message);
                 navigate("/project-management");
             })

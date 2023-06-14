@@ -85,17 +85,24 @@ const getEditProjectDetails = (id) => {
 }
 
 const editProject = (values) => {
-    return userAxiosInstance.post("/edit-project",values, {withCredentials: true})
+    return userAxiosInstance.post("/edit-project", values, { withCredentials: true })
 }
 
 const getMembers = () => {
-    return userAxiosInstance.get("/get-member",{withCredentials: true})
+    return userAxiosInstance.get("/get-member", { withCredentials: true })
 }
 
-const giveAccessToProject = (value) => {
-    return userAxiosInstance.post("/give-access",value,{withCredentials: true})
+const giveAccessToProject = (id, value) => {
+    return userAxiosInstance.post(`/give-access/${id}`, value, { withCredentials: true })
 }
 
+const getAccessMembersList = (projectId) => {
+    return userAxiosInstance.get(`/get-access-member-list/${projectId}`,{withCredentials: true})
+}
+
+const removeAcess = (memberId, projectId) => {
+    return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`,{withCredentials: true})
+}
 
 export {
     userRegisteration,
@@ -120,5 +127,7 @@ export {
     getEditProjectDetails,
     editProject,
     getMembers,
-    giveAccessToProject
+    giveAccessToProject,
+    getAccessMembersList,
+    removeAcess
 }

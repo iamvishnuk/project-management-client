@@ -1,19 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {useSelector} from "react-redux"
-
-
+import { useSelector } from "react-redux";
 
 const ProjectSidebar = () => {
     const navigate = useNavigate();
-    const {projectName} = useSelector((state) => state.project.value);
-    console.log(projectName)
+    const { projectName } = useSelector((state) => state.project.value);
+
     return (
         <>
             <div className="h-screen bg-gray-100 lg:w-72 md:w-20 border-r-2">
                 <div className="flex justify-center items-center pt-3">
                     <h1 className="text-black font-medium text-xl lg:block md:hidden">
-                        Project Management
+                        {projectName}
                     </h1>
                 </div>
                 <hr className="mt-5" />

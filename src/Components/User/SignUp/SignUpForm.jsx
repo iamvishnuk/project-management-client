@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import jwtDecode from "jwt-decode";
 import { userRegisteration, signupWithGoogle } from "../../../Services/userApi";
+import { useDispatch } from "react-redux";
+import { changeUserDetails } from "../../../Redux/UserSlice";
 
 const initialValues = {
     username: "",
@@ -15,6 +17,7 @@ const initialValues = {
 
 function SignUpForm() {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
         useFormik({
             initialValues: initialValues,
@@ -45,6 +48,7 @@ function SignUpForm() {
         const userDetails = jwtDecode(response.credential);
         signupWithGoogle(userDetails).then(res => {
             localStorage.setItem("userToken",res.data.token)
+            dispatch(changeUserDetails({ userId: res.data.userId }));
             toast.success(res.data.message)
             navigate("/project-management");
         }).catch(error => {

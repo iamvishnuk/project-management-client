@@ -3,17 +3,41 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import Modal from "../Components/User/Modal/Modal";
 import Select from "react-select";
-import { getMembers, giveAccessToProject } from "../Services/userApi";
+import {
+    getMembers,
+    giveAccessToProject,
+    getAccessMembersList,
+} from "../Services/userApi";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import ManageAccessTable from "../Components/User/Table/ManageAccessTable";
 
 const ManageAccess = () => {
     const [modal, showModal] = useState(false);
     const [members, setMembers] = useState([]); // storing the members data
     const [access, setAccess] = useState(null);
+    const [accessMemberList, setAcessMemberList] = useState([]);
+    const { _id, projectLead } = useSelector((state) => state.project.value);
 
     // for changing members array for the select method
-    const options = members.map((data) => {
-        return { value: data._id, label: data.userName };
-    });
+    const options = members
+        .filter((items) => {
+            return items._id !== projectLead._id;
+        })
+        .map((data) => {
+            return { value: data._id, label: data.userName };
+        });
+
+    const getAccessMember = () => {
+        getAccessMembersList(_id)
+            .then((res) => {
+                setAcessMemberList(res.data.accessMemberList);
+                console.log(res);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
     useEffect(() => {
         getMembers()
@@ -23,15 +47,20 @@ const ManageAccess = () => {
             .catch((error) => {
                 console.log(error);
             });
+        getAccessMember();
     }, []);
 
     const add = () => {
-        giveAccessToProject(access)
+        giveAccessToProject(_id, access)
             .then((res) => {
                 console.log(res);
+                toast.success(res.data.message);
+                showModal(false);
+                getAccessMember()
             })
             .catch((error) => {
                 console.log(error);
+                showModal(false);
             });
     };
 
@@ -48,35 +77,10 @@ const ManageAccess = () => {
                 </button>
             </div>
             <div>
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg border mt-4">
-                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" className="px-6 py-3">
-                                    User name
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Email
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th
-                                    scope="row"
-                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                >
-                                    Apple MacBook Pro 17"
-                                </th>
-                                <td className="px-6 py-4">Silver</td>
-                                <td className="px-6 py-4">Laptop</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <ManageAccessTable
+                    accessMemberList={accessMemberList}
+                    getData={getAccessMember}
+                />
             </div>
             <Modal isVisible={modal} onClose={() => showModal(false)}>
                 <div className="w-[400px] p-5">

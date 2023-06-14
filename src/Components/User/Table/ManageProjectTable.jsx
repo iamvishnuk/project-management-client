@@ -6,7 +6,7 @@ import { BiEdit } from "react-icons/bi";
 import Modal from "../Modal/Modal";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeProjectDetails } from "../../../Redux/ProjectSlice";
 
 const ManageProjectTable = () => {
@@ -14,12 +14,14 @@ const ManageProjectTable = () => {
     const [deleteModal, showDeleteModal] = useState(false);
     const [deleteCategoryId, setDeleteCategoryId] = useState("");
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const { userId } = useSelector((state) => state.user);
 
     // for getting the all project data
     const getData = () => {
         getAllProjectDetail()
             .then((res) => {
+                console.log(res.data.projectDetails)
                 setProjectDetails(res.data.projectDetails);
             })
             .catch((error) => {
@@ -35,7 +37,6 @@ const ManageProjectTable = () => {
     const projectDelete = () => {
         deleteProject(deleteCategoryId)
             .then((res) => {
-                console.log(res);
                 toast.success(res.data.message);
                 showDeleteModal(false);
                 getData();
@@ -80,8 +81,12 @@ const ManageProjectTable = () => {
                                         scope="row"
                                         className="px-6 py-4 font-medium text-blue-700 whitespace-nowrap dark:text-white hover:underline hover:cursor-pointer"
                                         onClick={() => {
-                                            dispatch(changeProjectDetails(project))
-                                            navigate(`/project-management/${project.projectName}/board`);
+                                            dispatch(
+                                                changeProjectDetails(project)
+                                            );
+                                            navigate(
+                                                `/project-management/${project.projectName}/board`
+                                            );
                                         }}
                                     >
                                         {project.projectName}
@@ -93,30 +98,39 @@ const ManageProjectTable = () => {
                                         {project.projectLead.userName}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button
-                                            className="mr-1"
-                                            onClick={() =>
-                                                navigate(
-                                                    `/edit-project/${project._id}`
-                                                )
-                                            }
-                                        >
-                                            <BiEdit size={22} color="blue" />
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                showDeleteModal(true);
-                                                setDeleteCategoryId(
-                                                    project._id
-                                                );
-                                            }}
-                                            className="mr-1"
-                                        >
-                                            <AiFillDelete
-                                                size={22}
-                                                color="red"
-                                            />
-                                        </button>
+                                        {project.members.includes(userId) ? (
+                                            <span>Disabled</span>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    className="mr-1"
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/edit-project/${project._id}`
+                                                        )
+                                                    }
+                                                >
+                                                    <BiEdit
+                                                        size={22}
+                                                        color="blue"
+                                                    />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        showDeleteModal(true);
+                                                        setDeleteCategoryId(
+                                                            project._id
+                                                        );
+                                                    }}
+                                                    className="mr-1"
+                                                >
+                                                    <AiFillDelete
+                                                        size={22}
+                                                        color="red"
+                                                    />
+                                                </button>
+                                            </>
+                                        )}
                                     </td>
                                 </tr>
                             );

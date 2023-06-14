@@ -3,9 +3,12 @@ import Sidebar from "../Components/User/Sidebar/Sidebar";
 import Modal from "../Components/User/Modal/Modal";
 import { toast } from "react-toastify";
 import { getAllPeople, sendInviteMail } from "../Services/userApi";
+import PeopleCard from "../Components/User/cards/PeopleCard";
+import CreateTeamModal from "../Components/User/Modal/CreateTeamModal";
 
 const ManageTeam = () => {
     const [addPeopleModal, setAddPeopleModal] = useState(false);
+    const [createTeamModal, showCreateTeamModal] = useState(false)
     const [email, setEmail] = useState("");
     const [people, setPeople] = useState([]);
 
@@ -28,7 +31,7 @@ const ManageTeam = () => {
             .then((res) => {
                 toast.success(res.data.message);
                 setAddPeopleModal(false);
-                getPeople()
+                getPeople();
             })
             .catch((err) => {
                 toast.error(err.response.data.message);
@@ -42,7 +45,7 @@ const ManageTeam = () => {
                     <div className="">
                         <h1 className="text-2xl font-bold">People and Teams</h1>
                     </div>
-                    <div className="mt-8">
+                    <div className="my-8">
                         <h1 className="text-xl font-semibold">People</h1>
                         <div className="grid grid-cols-6 gap-5 px-2 py-3">
                             {/* add people to your team */}
@@ -63,29 +66,26 @@ const ManageTeam = () => {
                                 </div>
                             </div>
                             {/* people in your team */}
-                            {people.map((user, index) => {
-                                return (
-                                    <div
-                                        key={index}
-                                        className="w-[160px] bg-white border-2 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:shadow-xl"
-                                    >
-                                        <div className="flex flex-col items-center py-5">
-                                            <img
-                                                className="w-24 h-24 mb-3 rounded-full shadow-lg"
-                                                src={
-                                                    user.image
-                                                        ? user.image
-                                                        : "https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
-                                                }
-                                            />
+                            <PeopleCard people={people} />
+                        </div>
+                    </div>
 
-                                            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-                                                {user.userName}
-                                            </h5>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                    <div>
+                        <div>
+                            <h1 className="text-xl font-semibold">
+                                Your Teams
+                            </h1>
+                        </div>
+                        <div className="grid grid-cols-6 gap-5 px-2 py-3">
+                            <div className="w-[160px] bg-white border-2 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:shadow-xl">
+                                <div className="flex flex-col items-center pb-5">
+                                    <div className="bg-gradient-to-r from-green-400 to-green-200 w-full h-24 mb-5 rounded-t-lg"></div>
+                                    <h1>Your new team</h1>
+                                    <button className="bg-gray-300 py-2 px-4 rounded-md font-medium mt-1" onClick={() => showCreateTeamModal(true)}>
+                                        Create Team
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,6 +141,10 @@ const ManageTeam = () => {
                         </button>
                     </div>
                 </div>
+            </Modal>
+            {/* Create team modal */}
+            <Modal isVisible={createTeamModal} onClose={() => showCreateTeamModal(false)}>
+                <CreateTeamModal onClose={()=> showCreateTeamModal(false)} />
             </Modal>
         </>
     );

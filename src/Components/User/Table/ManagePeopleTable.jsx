@@ -1,74 +1,76 @@
-import React, { useState } from "react";
-import { removeAcess } from "../../../Services/userApi";
+import React from "react";
+import { useState } from "react";
+import { getAllPeople, removePeople } from "../../../Services/userApi";
+import { useEffect } from "react";
 import Modal from "../Modal/Modal";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-const ManageAccessTable = ({ accessMemberList, getData }) => {
-    const [memberId, setmemberId] = useState("");
+export const ManagePeopleTable = () => {
+    const [people, setPeople] = useState([]);
     const [modal, showModal] = useState(false);
-    const { _id, createdBy, projectLead } = useSelector((state) => state.project.value);
-    const { userId } = useSelector((state) => state.user);
+    const [userId, setUserId] = useState("");
+    console.log(userId);
+
+    const fetchData = () => {
+        getAllPeople()
+            .then((res) => setPeople(res.data.peopleData))
+            .catch((error) => console.log(error));
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     const remove = () => {
-        removeAcess(memberId, _id)
+        console.log("function called");
+        removePeople(userId)
             .then((res) => {
+                console.log(res);
                 toast.success(res.data.message);
+                fetchData();
                 showModal(false);
-                getData();
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => console.log(error));
     };
 
     return (
         <>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg border mt-4">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg border">
                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
-                                User name
+                                Username
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Email
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Actions
+                                action
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {accessMemberList.map((member, index) => {
+                        {people.map((user, index) => {
                             return (
                                 <tr
                                     key={index}
-                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
                                 >
-                                    <th
-                                        scope="row"
-                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                    >
-                                        {member.userName}
-                                    </th>
                                     <td className="px-6 py-4">
-                                        {member.email}
+                                        {user.userName}
                                     </td>
+                                    <td className="px-6 py-4">{user.email}</td>
                                     <td className="px-6 py-4">
-                                        {createdBy == userId ||
-                                        projectLead._id == userId ? (
-                                            <button
-                                                className="bg-yellow-300 font-medium px-3 py-1 rounded-md text-black hover:bg-yellow-400"
-                                                onClick={() => {
-                                                    setmemberId(member._id);
-                                                    showModal(true);
-                                                }}
-                                            >
-                                                Remove
-                                            </button>
-                                        ) : (
-                                            <span>Disabled</span>
-                                        )}
+                                        <button
+                                            className="bg-red-600 text-white py-1 px-3 rounded-md font-medium hover:bg-red-700"
+                                            onClick={() => {
+                                                setUserId(user._id);
+                                                showModal(true);
+                                            }}
+                                        >
+                                            Remove
+                                        </button>
                                     </td>
                                 </tr>
                             );
@@ -79,7 +81,7 @@ const ManageAccessTable = ({ accessMemberList, getData }) => {
             <Modal isVisible={modal} onClose={() => showModal(false)}>
                 <div className="w-[600px] p-7">
                     <div className="text-center py-6">
-                        <i className="fa-solid fa-user-minus text-5xl text-yellow-300"></i>
+                        <i className="fa-solid fa-user-minus text-5xl text-red-600"></i>
                         <h2 className="text-4xl text-gray-500 font-normal mt-10 mb-8">
                             Are you sure ?
                         </h2>
@@ -101,5 +103,3 @@ const ManageAccessTable = ({ accessMemberList, getData }) => {
         </>
     );
 };
-
-export default ManageAccessTable;

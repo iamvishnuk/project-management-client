@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Modal from "../Components/User/Modal/Modal";
-import Sidebar from "../Components/User/Sidebar/Sidebar";
 import MangeCategoryTable from "../Components/User/Table/ManageCategoryTable";
 import { useFormik } from "formik";
 import { createCategroySchem } from "../yup";
@@ -52,27 +51,20 @@ const ManageCeteogry = () => {
 
     return (
         <>
-            <div className="flex">
-                <Sidebar />
-                <div className="bg-white p-10 font-semibold flex-1 h-screen">
-                    <h1 className="text-2xl font-bold">
-                        Manage Project Category
-                    </h1>
-                    <div className="mt-3 mb-3 w-full flex justify-end">
-                        <button
-                            className="bg-btn-green text-white font-medium px-3 py-1 rounded-md"
-                            onClick={() => setShowModal(true)}
-                        >
-                            <i className="fa-solid fa-plus text-white mr-2"></i>
-                            Create Category
-                        </button>
-                    </div>
-                    <MangeCategoryTable
-                        categoryData={categoryData}
-                        onDelete={getCategoryDetail}
-                    />
-                </div>
+            <h1 className="text-2xl font-bold">Manage Project Category</h1>
+            <div className="mt-3 mb-3 w-full flex justify-end">
+                <button
+                    className="bg-btn-green text-white font-medium px-3 py-1 rounded-md"
+                    onClick={() => setShowModal(true)}
+                >
+                    <i className="fa-solid fa-plus text-white mr-2"></i>
+                    Create Category
+                </button>
             </div>
+            <MangeCategoryTable
+                categoryData={categoryData}
+                onDelete={getCategoryDetail}
+            />
             <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
                 <div className="w-[600px]">
                     <div className="p-5">

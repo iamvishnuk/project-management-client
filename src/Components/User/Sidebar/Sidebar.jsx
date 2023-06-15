@@ -81,7 +81,7 @@ const Sidebar = () => {
                                 !open && "hidden"
                             } orign-left duration-200`}
                         >
-                            Manage Team
+                            Team
                         </span>
                     </li>
                     <li onClick={() => navigate("/user-profile")} className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">

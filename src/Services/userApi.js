@@ -1,6 +1,6 @@
 import { userAxiosInstance } from "../axios/AxiosInstance";
 
-// Api related to users 
+// ----------------- Api related to users ----------------------------------- 
 const userRegisteration = (value) => {
     return userAxiosInstance.post("/signup", value, { withCredentials: true })
 }
@@ -36,9 +36,10 @@ const forgotPassword = (id, value) => {
 const isAuthUser = () => {
     return userAxiosInstance.get("/is-auth-user", { withCredentials: true })
 }
+// ----------------- end of api related to user -------------------------------
 
 
-// api related to project category
+// ---------------- api related to project category ---------------------------
 const getCategory = () => {
     return userAxiosInstance.get('/get-category-data', { withCredentials: true })
 }
@@ -53,8 +54,10 @@ const editCategory = (value) => {
 const deleteCategory = (id) => {
     return userAxiosInstance.get(`/delete-category/${id}`, { withCredentials: true })
 }
+// ------------------ end of api related to project category -------------------------
 
-// api related to team management
+
+// ------------------ api related to team management ---------------------------------
 const getAllPeople = () => {
     return userAxiosInstance.get("/get-all-people", { withCredentials: true })
 }
@@ -63,7 +66,34 @@ const sendInviteMail = (email) => {
     return userAxiosInstance.post("/send-invite-mail", email, { withCredentials: true })
 }
 
-// apit related to project management
+const createTeam = (data) => {
+    return userAxiosInstance.post("/create-team", data, { withCredentials: true })
+}
+
+const getAllTeam = () => {
+    return userAxiosInstance.get("/get-team", { withCredentials: true })
+}
+
+const removePeople = (id) => {
+    return userAxiosInstance.get(`/remove-people/${id}`, { withCredentials: true })
+}
+
+const getSingleTeam = (id) => {
+    return userAxiosInstance.get(`/get-single-team/${id}`,{withCredentials: true})
+}
+
+const removeTeamMember = (teamId,memberId) => {
+    return userAxiosInstance.get(`/remove-team-member/${teamId}/${memberId}`,{withCredentials: true})
+}
+
+const addTeamMember = (teamId,member) => {
+    return userAxiosInstance.post(`/add-team-memeber/${teamId}`,member,{withCredentials: true})
+}
+
+// ------------------- end of api related to team management --------------------
+
+
+// -------------------- apit related to project management -----------------------
 const getMembersAndCategory = () => {
     return userAxiosInstance.get("/get-member-and-category", { withCredentials: true })
 }
@@ -97,12 +127,14 @@ const giveAccessToProject = (id, value) => {
 }
 
 const getAccessMembersList = (projectId) => {
-    return userAxiosInstance.get(`/get-access-member-list/${projectId}`,{withCredentials: true})
+    return userAxiosInstance.get(`/get-access-member-list/${projectId}`, { withCredentials: true })
 }
 
 const removeAcess = (memberId, projectId) => {
-    return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`,{withCredentials: true})
+    return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`, { withCredentials: true })
 }
+
+
 
 export {
     userRegisteration,
@@ -129,5 +161,11 @@ export {
     getMembers,
     giveAccessToProject,
     getAccessMembersList,
-    removeAcess
+    removeAcess,
+    createTeam,
+    getAllTeam,
+    removePeople,
+    getSingleTeam,
+    removeTeamMember,
+    addTeamMember
 }

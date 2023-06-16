@@ -90,6 +90,10 @@ const addTeamMember = (teamId,member) => {
     return userAxiosInstance.post(`/add-team-memeber/${teamId}`,member,{withCredentials: true})
 }
 
+const deleteTeam = (teamId) => {
+    return userAxiosInstance.get(`/delete-team/${teamId}`,{withCredentials: true})
+}
+
 // ------------------- end of api related to team management --------------------
 
 
@@ -167,5 +171,6 @@ export {
     removePeople,
     getSingleTeam,
     removeTeamMember,
-    addTeamMember
+    addTeamMember,
+    deleteTeam
 }

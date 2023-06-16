@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import projectReducer from "./ProjectSlice"
 import userReducer from "./UserSlice"
-import {persistReducer, persistStore} from "redux-persist"
+import {persistReducer, persistStore,FLUSH,REGISTER,REHYDRATE,PAUSE,PURGE,PERSIST} from "redux-persist"
 import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
@@ -12,11 +12,24 @@ const persistConfig = {
 const persistedProjectReducer = persistReducer(persistConfig, projectReducer)
 const persistedUserReducer = persistReducer(persistConfig, userReducer)
 
-export const Store =  configureStore({
+export const Store = configureStore({
     reducer: {
         project: persistedProjectReducer,
-        user: persistedUserReducer
+        user: persistedUserReducer,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [
+                    FLUSH,
+                    REHYDRATE,
+                    PAUSE,
+                    PERSIST,
+                    PURGE,
+                    REGISTER,
+                ],
+            },
+        }),
 });
 
 export const persistor = persistStore(Store)

@@ -15,7 +15,7 @@ import Team from "../Pages/Team";
 import UserProfile from "../Pages/UserProfile";
 import EditProject from "../Pages/EditProject";
 import ProjectManagementLayout from "../Layout/ProjectManagementLayout";
-import Board from "../Pages/Board";
+import BoardPage from "../Pages/BoardPage";
 import ManageAccess from "../Pages/ManageAccess";
 import DefaultLayout from "../Layout/DefaultLayout";
 import ManagePeople from "../Pages/ManagePeople";
@@ -41,7 +41,7 @@ function UserRoutes() {
                 </Route>
                 {/* <Route path="/plan-pricing" element={<PlanPricingPage />} /> */}
                 <Route element={<ProjectManagementLayout />}>
-                    <Route path="/project-management/:name/board" element={<Board />} />
+                    <Route path="/project-management/:name/board" element={<BoardPage />} />
                     <Route path="/project-management/manage-access" element={<ManageAccess />} />
                 </Route>
             </Route>

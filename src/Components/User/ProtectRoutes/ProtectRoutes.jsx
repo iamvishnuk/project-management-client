@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { isAuthUser } from "../../../Services/userApi";
-import { toast } from "react-toastify";
 
 const ProtectRoutes = ({ route }) => {
     const [auth, setAuth] = useState(null);

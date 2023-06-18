@@ -1,61 +1,58 @@
-import React from "react";
-import {
-    MdKeyboardDoubleArrowUp,
-    MdKeyboardArrowUp,
-    MdKeyboardArrowDown,
-    MdKeyboardDoubleArrowDown,
-} from "react-icons/md";
-import { RiTaskFill } from "react-icons/ri";
-import { FaBug } from "react-icons/fa";
+import React, { useEffect } from "react";
 import Select from "react-select";
 import JoditEditor from "jodit-react";
 import { useRef } from "react";
 import { useState } from "react";
+import { getAccessMembersList } from "../../../Services/userApi";
+import { priorityOptions, taskTypeOpions } from "../../../constant/constant";
+import { useSelector } from "react-redux";
+import { createNewTask } from "../../../Services/boardApi";
+import { toast } from "react-toastify";
 
-const CreateTaskModal = () => {
+const CreateTaskModal = ({ boardId, onClose, getData }) => {
     const editor = useRef(null);
+    const [accessMemberList, setAcessMemberList] = useState([]);
+    const [taskType, setTaskType] = useState(null);
+    const [shortSummary, setShortSummary] = useState("");
     const [description, setDescription] = useState(null);
-    console.log(description)
+    const [assignee, setAssignee] = useState(null);
+    const [priority, setPriority] = useState(null);
+    const { _id } = useSelector((state) => state.project.value);
 
-    //for priority select option
-    const options = [
-        {
-            value: "Highest",
-            label: "Highest",
-            icon: <MdKeyboardDoubleArrowUp color="red" size={20} />,
-        },
-        {
-            value: "High",
-            label: "High",
-            icon: <MdKeyboardArrowUp color="red" size={20} />,
-        },
-        {
-            value: "Low",
-            label: "Low",
-            icon: <MdKeyboardArrowDown color="green" size={20} />,
-        },
-        {
-            value: "Lowest",
-            label: "Lowest",
-            icon: <MdKeyboardDoubleArrowDown color="green" size={20} />,
-        },
-    ];
+    // data for create task function
+    const newtask = {
+        taskType: taskType && taskType.value,
+        shortSummary: shortSummary,
+        description: description,
+        assignee: assignee && assignee.value,
+        priority: priority && priority.value,
+    };
 
-    // for issue type select option
-    const type = [
-        {
-            value: "task",
-            label: "Task",
-            icon: <RiTaskFill color="blue" size={20} />,
-        },
-        { value: "bug", label: "Bug", icon: <FaBug color="red" size={20} /> },
-    ];
+    useEffect(() => {
+        // getting the memeber in the project for selecting the the assignee
+        getAccessMembersList(_id)
+            .then((res) => {
+                console.log(res.data);
+                setAcessMemberList(res.data.accessMemberList);
+                
+            })
+            .catch((error) => console.log(error) );
+    }, []);
 
-    const assignee = [
-        {value: "user 1", label: "user 1"},
-        {value: "user 2", label: "user 2"},
-        {value: "user 3", label: "user 3"},
-    ]
+    // changing the acccess member list for select
+    const option = accessMemberList.map((member) => {
+        return { value: member._id, label: member.userName };
+    });
+
+    // creating new task
+    const createTask = () => {
+        createNewTask(boardId, _id, newtask)
+            .then((res) => {
+                onClose();
+                getData();
+            })
+            .catch((error) => toast.error(error.response.data.message));
+    };
 
     return (
         <>
@@ -68,37 +65,39 @@ const CreateTaskModal = () => {
                                 htmlFor="projectCategory"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >
-                                Issue type
+                                Task type
                             </label>
                             <Select
-                                options={type}
+                                options={taskTypeOpions}
                                 getOptionLabel={(type) => (
                                     <div className="flex items-center">
-                                        <span>{type.icon}</span>
+                                        <span className="mr-2">
+                                            {type.icon}
+                                        </span>
                                         {type.label}
                                     </div>
                                 )}
+                                name="taskType"
+                                onChange={setTaskType}
                             />
                         </div>
                         <div className="mb-6">
-                            <label
-                                htmlFor="projectName"
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Short summary about the task
                             </label>
                             <input
                                 type="text"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Enter your project name"
-                                name="projectName"
+                                placeholder="task name..."
+                                name="shortSummary"
+                                value={shortSummary}
+                                onChange={(e) =>
+                                    setShortSummary(e.target.value)
+                                }
                             />
                         </div>
                         <div className="mb-6">
-                            <label
-                                htmlFor="projectName"
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Description
                             </label>
                             <JoditEditor
@@ -117,7 +116,11 @@ const CreateTaskModal = () => {
                             >
                                 Assignee
                             </label>
-                            <Select options={assignee} />
+                            <Select
+                                options={option}
+                                name="assignee"
+                                onChange={setAssignee}
+                            />
                         </div>
                         <div className="mb-6">
                             <label
@@ -127,18 +130,27 @@ const CreateTaskModal = () => {
                                 Priority
                             </label>
                             <Select
-                                options={options}
+                                options={priorityOptions}
                                 getOptionLabel={(options) => (
                                     <div className="flex items-center">
                                         <span>{options.icon}</span>
                                         {options.label}
                                     </div>
                                 )}
+                                name="priority"
+                                onChange={setPriority}
                             />
                         </div>
                         <div className="flex justify-end">
-                            <button className="bg-blue-600 text-white font-medium py-1 px-3 mr-2 rounded-md hover:bg-blue-500">Create</button>
-                            <button className="text-black py-1 px-2 rounded-md hover:bg-gray-300">Cancel</button>
+                            <button className="bg-blue-600 text-white font-medium py-1 px-3 mr-2 rounded-md hover:bg-blue-500" onClick={createTask}>
+                                Create
+                            </button>
+                            <button
+                                className="text-black py-1 px-2 rounded-md hover:bg-gray-300"
+                                onClick={() => onClose()}
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>

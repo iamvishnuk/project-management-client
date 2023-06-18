@@ -28,6 +28,7 @@ const ManageAccess = () => {
             return { value: data._id, label: data.userName };
         });
 
+    // for gettin the memeber how have access to the project
     const getAccessMember = () => {
         getAccessMembersList(_id)
             .then((res) => {
@@ -50,6 +51,7 @@ const ManageAccess = () => {
         getAccessMember();
     }, []);
 
+    // for adding people to the project
     const add = () => {
         giveAccessToProject(_id, access)
             .then((res) => {

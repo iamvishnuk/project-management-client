@@ -76,7 +76,7 @@ const EditProjectForm = () => {
                             value={
                                 projectDetails == null
                                     ? ""
-                                    : projectDetails.projectName
+                                    : projectDetails && projectDetails.projectName
                             }
                             onChange={handleInput}
                         />

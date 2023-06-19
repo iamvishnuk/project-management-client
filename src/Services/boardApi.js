@@ -16,9 +16,19 @@ const createNewTask = (boardId, projectId, values) => {
     return userAxiosInstance.post(`/create-new-task/${projectId}/${boardId}`, values, { withCredentials: true })
 }
 
+const dragAndDropTask = ( value ) => {
+    return userAxiosInstance.post("/drag-drop-task",value,{withCredentials: true})
+}
+
+const editShortSummary = (value) => {
+    return userAxiosInstance.post("/edite-short-summary",value,{withCredentials: true})
+}
+
 export {
     createBoard,
     getBoardData,
     deleteBoard,
-    createNewTask
+    createNewTask,
+    dragAndDropTask,
+    editShortSummary
 }

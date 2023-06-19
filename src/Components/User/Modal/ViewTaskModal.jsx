@@ -1,22 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { RiDeleteBin6Line, RiTaskFill } from "react-icons/ri";
+import { useState } from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import Select from "react-select";
-import {
-    MdKeyboardDoubleArrowUp,
-    MdKeyboardArrowUp,
-    MdKeyboardArrowDown,
-    MdKeyboardDoubleArrowDown,
-} from "react-icons/md";
 import { BsCheckLg } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
-import { priorityOptions } from "../../../constant/constant";
+import { priorityOptions, taskTypeOpions } from "../../../constant/constant";
+import { editShortSummary } from "../../../Services/boardApi";
 
-export const ViewTaskModal = () => {
-    const [status, setStatus] = useState("todo");
+export const ViewTaskModal = ({ item, boardName, getData }) => {
+    // for showing the edite option
     const [taskNameEdite, setTaskNameEdite] = useState(false);
     const [descriptionEdit, setDescriptionEdit] = useState(false);
     const [changeAssignee, setChangeAssignee] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
+    const [changeStatus, setChangeStatus] = useState(false);
+    // for storing the value of editing field
+    const [value, setValue] = useState("");
+
+    // for displaying the task type
+    const matchedTaskType = taskTypeOpions.find(
+        (value) => item.taskType == value.value
+    );
+
+    // displaying the priority of the task
+    const matchedPriority = priorityOptions.find(
+        (value) => item.priority == value.value
+    );
+
+    const shortSummaryEdit = () => {
+        editShortSummary({
+            value: value,
+            boardName: boardName,
+            taksId: item._id,
+        })
+            .then((res) => {
+                console.log(res);
+                getData();
+                setTaskNameEdite(false)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    console.log(value);
 
     return (
         <>
@@ -25,8 +51,14 @@ export const ViewTaskModal = () => {
                     <div className="flex justify-between items-center ">
                         <div>
                             <span className="hover:bg-gray-100 py-1 px-3 rounded-md flex items-center">
-                                <RiTaskFill color="blue" size={20} />
-                                Issue type
+                                {matchedTaskType && (
+                                    <>
+                                        {matchedTaskType.icon}
+                                        <span className="ml-2">
+                                            {matchedTaskType.value}
+                                        </span>
+                                    </>
+                                )}
                             </span>
                         </div>
                         <div>
@@ -43,10 +75,19 @@ export const ViewTaskModal = () => {
                                             id=""
                                             cols="65"
                                             rows="2"
+                                            value={value}
+                                            onChange={(e) =>
+                                                setValue(e.target.value)
+                                            }
                                         ></textarea>
                                     </div>
                                     <button className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600">
-                                        <BsCheckLg size={20} />
+                                        <BsCheckLg
+                                            size={20}
+                                            onClick={() => {
+                                                shortSummaryEdit();
+                                            }}
+                                        />
                                     </button>
                                     <button
                                         className="p-2 rounded-md hover:bg-gray-300"
@@ -58,11 +99,13 @@ export const ViewTaskModal = () => {
                             ) : (
                                 <div
                                     className="mb-3"
-                                    onClick={() => setTaskNameEdite(true)}
+                                    onClick={() => {
+                                        setValue(item?.shortSummary);
+                                        setTaskNameEdite(true);
+                                    }}
                                 >
                                     <h1 className="font-medium text-2xl hover:bg-gray-200 p-1">
-                                        Try dragging issues to different columns
-                                        to transition their status.
+                                        {item && item?.shortSummary}
                                     </h1>
                                 </div>
                             )}
@@ -95,29 +138,19 @@ export const ViewTaskModal = () => {
                                             </button>
                                         </>
                                     ) : (
-                                        <p
+                                        <div
                                             onClick={() =>
                                                 setDescriptionEdit(true)
                                             }
                                         >
-                                            Lorem ipsum dolor sit amet
-                                            consectetur, adipisicing elit.
-                                            Labore impedit dolor magni cumque!
-                                            Libero nostrum expedita, repudiandae
-                                            temporibus, harum, quaerat eum nisi
-                                            ex dolorum at obcaecati sunt impedit
-                                            dignissimos dolores! Lorem ipsum
-                                            dolor sit amet consectetur
-                                            adipisicing elit. Sint voluptatem
-                                            numquam amet tenetur voluptas minima
-                                            cupiditate vitae esse, doloribus
-                                            nostrum dolor molestias dolore natus
-                                            nulla expedita, explicabo iusto sit.
-                                            Mollitia aspernatur, officiis
-                                            dolorem amet, distinctio laboriosam
-                                            voluptatibus beatae ex tempore ipsam
-                                            voluptas!{" "}
-                                        </p>
+                                            {item && (
+                                                <p
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: item.description,
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -148,15 +181,38 @@ export const ViewTaskModal = () => {
                                 <h1 className="font-medium text-sm text-gray-500 mb-1">
                                     STATUS
                                 </h1>
-                                <Select
-                                    options={priorityOptions}
-                                    getOptionLabel={(priorityOptions) => (
-                                        <div className="flex items-center">
-                                            <span>{priorityOptions.icon}</span>
-                                            {priorityOptions.label}
-                                        </div>
-                                    )}
-                                />
+                                {changeStatus ? (
+                                    <div>
+                                        <Select
+                                            options={priorityOptions}
+                                            getOptionLabel={(
+                                                priorityOptions
+                                            ) => (
+                                                <div className="flex items-center">
+                                                    <span>
+                                                        {priorityOptions.icon}
+                                                    </span>
+                                                    {priorityOptions.label}
+                                                </div>
+                                            )}
+                                        />
+                                        <button className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2">
+                                            <BsCheckLg size={20} />
+                                        </button>
+                                        <button
+                                            className="p-2 rounded-md hover:bg-gray-300 mt-2"
+                                            onClick={() =>
+                                                setChangeStatus(false)
+                                            }
+                                        >
+                                            <RxCross2 size={20} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <h1 onClick={() => setChangeStatus(true)}>
+                                        {item && boardName}
+                                    </h1>
+                                )}
                             </div>
                             <div className="mb-5">
                                 <h1 className="font-medium text-sm text-gray-500 mb-1">
@@ -179,7 +235,9 @@ export const ViewTaskModal = () => {
                                     </div>
                                 ) : (
                                     <h1 onClick={() => setChangeAssignee(true)}>
-                                        Test User 1
+                                        {item && item?.assignee
+                                            ? item?.assignee.userName
+                                            : "Unassigned"}
                                     </h1>
                                 )}
                             </div>
@@ -223,11 +281,14 @@ export const ViewTaskModal = () => {
                                         className="flex items-center"
                                         onClick={() => setEditPriority(true)}
                                     >
-                                        <MdKeyboardDoubleArrowUp
-                                            size={20}
-                                            color="red"
-                                        />
-                                        <span>Highest</span>
+                                        {matchedPriority && (
+                                            <>
+                                                {matchedPriority.icon}
+                                                <span className="ml-2">
+                                                    {matchedPriority.value}
+                                                </span>
+                                            </>
+                                        )}
                                     </div>
                                 )}
                             </div>

@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import Select from "react-select";
-import JoditEditor from "jodit-react";
-import { useRef } from "react";
 import { useState } from "react";
 import { getAccessMembersList } from "../../../Services/userApi";
 import { priorityOptions, taskTypeOpions } from "../../../constant/constant";
@@ -10,11 +8,10 @@ import { createNewTask } from "../../../Services/boardApi";
 import { toast } from "react-toastify";
 
 const CreateTaskModal = ({ boardId, onClose, getData }) => {
-    const editor = useRef(null);
     const [accessMemberList, setAcessMemberList] = useState([]);
     const [taskType, setTaskType] = useState(null);
     const [shortSummary, setShortSummary] = useState("");
-    const [description, setDescription] = useState(null);
+    const [description, setDescription] = useState("");
     const [assignee, setAssignee] = useState(null);
     const [priority, setPriority] = useState(null);
     const { _id } = useSelector((state) => state.project.value);
@@ -34,9 +31,8 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
             .then((res) => {
                 console.log(res.data);
                 setAcessMemberList(res.data.accessMemberList);
-                
             })
-            .catch((error) => console.log(error) );
+            .catch((error) => console.log(error));
     }, []);
 
     // changing the acccess member list for select
@@ -100,14 +96,13 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
                             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Description
                             </label>
-                            <JoditEditor
-                                ref={editor}
+                            <textarea
+                                className="w-full border-gray-300 rounded-md"
+                                name=""
+                                rows="5"
                                 value={description}
-                                tabIndex={1}
-                                onChange={(newContent) =>
-                                    setDescription(newContent)
-                                }
-                            />
+                                onChange={(e) => setDescription(e.target.value)}
+                            ></textarea>
                         </div>
                         <div className="mb-6">
                             <label
@@ -142,7 +137,10 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
                             />
                         </div>
                         <div className="flex justify-end">
-                            <button className="bg-blue-600 text-white font-medium py-1 px-3 mr-2 rounded-md hover:bg-blue-500" onClick={createTask}>
+                            <button
+                                className="bg-blue-600 text-white font-medium py-1 px-3 mr-2 rounded-md hover:bg-blue-500"
+                                onClick={createTask}
+                            >
                                 Create
                             </button>
                             <button

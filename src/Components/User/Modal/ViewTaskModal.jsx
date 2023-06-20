@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Select from "react-select";
 import { BsCheckLg } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
 import { priorityOptions, taskTypeOpions } from "../../../constant/constant";
-import { editShortSummary } from "../../../Services/boardApi";
+import {
+    editTask,
+    getBoardNames,
+    editChangeBoard,
+} from "../../../Services/boardApi";
+import { useSelector } from "react-redux";
+import { getAccessMembersList } from "../../../Services/userApi";
 
 export const ViewTaskModal = ({ item, boardName, getData }) => {
     // for showing the edite option
@@ -13,8 +19,31 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
     const [changeAssignee, setChangeAssignee] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
     const [changeStatus, setChangeStatus] = useState(false);
-    // for storing the value of editing field
+
+    // for storing the value of editing field and name of the field
     const [value, setValue] = useState("");
+    const [fieldName, setFieldName] = useState("");
+    const [changeBoard, setChangeBoard] = useState("");
+    const [comment, setComment] = useState("");
+
+    const [sample, setSample] = useState("");
+
+    const [accessMemberList, setAcessMemberList] = useState([]);
+    const [boardNames, setBoardNames] = useState([]);
+
+    // project id from redux
+    const { _id } = useSelector((state) => state.project.value);
+    const { userId } = useSelector((state) => state.user);
+
+    //changing the members array for the select method
+    const option = accessMemberList.map((member) => {
+        return { value: member._id, label: member.userName };
+    });
+
+    //changing the boardNames array for the select method
+    const boardNameOptions = boardNames.map((board) => {
+        return { value: board, label: board };
+    });
 
     // for displaying the task type
     const matchedTaskType = taskTypeOpions.find(
@@ -26,21 +55,60 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
         (value) => item.priority == value.value
     );
 
-    const shortSummaryEdit = () => {
-        editShortSummary({
+    // for editing shortSummary, description, assignee, and priority
+    const editData = () => {
+        editTask({
             value: value,
             boardName: boardName,
-            taksId: item._id,
+            taskId: item._id,
+            fieldName: fieldName,
         })
             .then((res) => {
-                console.log(res);
                 getData();
-                setTaskNameEdite(false)
+                setChangeAssignee(false);
+                setEditPriority(false);
+                setDescriptionEdit(false);
+                setTaskNameEdite(false);
             })
             .catch((error) => {
                 console.log(error);
             });
     };
+
+    // for getting the access members of the project
+    useEffect(() => {
+        getAccessMembersList(_id)
+            .then((res) => {
+                setAcessMemberList(res.data.accessMemberList);
+            })
+            .catch((error) => console.log(error));
+        getBoardNames()
+            .then((res) => {
+                console.log(res.data);
+                setBoardNames(res.data.boardNames);
+            })
+            .catch((error) => console.log(error.message));
+    }, []);
+
+    //for changing the board
+    const boardChange = () => {
+        const value = {
+            source: boardName,
+            destination: changeBoard.value,
+            taskId: item.taskId,
+        };
+        editChangeBoard(value)
+            .then((res) => {
+                console.log(res.data);
+                getData();
+                setChangeStatus(false);
+            })
+            .catch((error) => console.log(error));
+    };
+
+    const sampleFun = () => {
+        console.log(sample)
+    }
 
     console.log(value);
 
@@ -81,13 +149,13 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                             }
                                         ></textarea>
                                     </div>
-                                    <button className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600">
-                                        <BsCheckLg
-                                            size={20}
-                                            onClick={() => {
-                                                shortSummaryEdit();
-                                            }}
-                                        />
+                                    <button
+                                        className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600"
+                                        onClick={() => {
+                                            editData();
+                                        }}
+                                    >
+                                        <BsCheckLg size={20} />
                                     </button>
                                     <button
                                         className="p-2 rounded-md hover:bg-gray-300"
@@ -101,6 +169,7 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                     className="mb-3"
                                     onClick={() => {
                                         setValue(item?.shortSummary);
+                                        setFieldName("shortSummary");
                                         setTaskNameEdite(true);
                                     }}
                                 >
@@ -123,9 +192,18 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                                     id=""
                                                     cols="65"
                                                     rows="5"
+                                                    value={value}
+                                                    onChange={(e) =>
+                                                        setValue(e.target.value)
+                                                    }
                                                 ></textarea>
                                             </div>
-                                            <button className="p-2 bg-blue-700 rounded-sm text-white mr-2 hover:bg-blue-600">
+                                            <button
+                                                className="p-2 bg-blue-700 rounded-sm text-white mr-2 hover:bg-blue-600"
+                                                onClick={() => {
+                                                    editData();
+                                                }}
+                                            >
                                                 Save
                                             </button>
                                             <button
@@ -139,9 +217,11 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                         </>
                                     ) : (
                                         <div
-                                            onClick={() =>
-                                                setDescriptionEdit(true)
-                                            }
+                                            onClick={() => {
+                                                setValue(item?.description);
+                                                setFieldName("description");
+                                                setDescriptionEdit(true);
+                                            }}
                                         >
                                             {item && (
                                                 <p
@@ -165,6 +245,10 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                             rows={3}
                                             className="w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                                             placeholder="Write your comments..."
+                                            value={comment}
+                                            onChange={(e) => {
+                                                setComment(e.target.value);
+                                            }}
                                         ></textarea>
                                         <button className="py-1 px-3 rounded-sm bg-blue-700 text-white hover:bg-blue-600 mr-2">
                                             save
@@ -184,19 +268,15 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                 {changeStatus ? (
                                     <div>
                                         <Select
-                                            options={priorityOptions}
-                                            getOptionLabel={(
-                                                priorityOptions
-                                            ) => (
-                                                <div className="flex items-center">
-                                                    <span>
-                                                        {priorityOptions.icon}
-                                                    </span>
-                                                    {priorityOptions.label}
-                                                </div>
-                                            )}
+                                            options={boardNameOptions}
+                                            onChange={setChangeBoard}
                                         />
-                                        <button className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2">
+                                        <button
+                                            className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2"
+                                            onClick={() => {
+                                                boardChange();
+                                            }}
+                                        >
                                             <BsCheckLg size={20} />
                                         </button>
                                         <button
@@ -220,8 +300,18 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                 </h1>
                                 {changeAssignee ? (
                                     <div>
-                                        <Select />
-                                        <button className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2">
+                                        <Select
+                                            options={option}
+                                            isSearchable
+                                            placeholder="Search for username"
+                                            onChange={setValue}
+                                        />
+                                        <button
+                                            className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2"
+                                            onClick={() => {
+                                                editData();
+                                            }}
+                                        >
                                             <BsCheckLg size={20} />
                                         </button>
                                         <button
@@ -234,7 +324,12 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                         </button>
                                     </div>
                                 ) : (
-                                    <h1 onClick={() => setChangeAssignee(true)}>
+                                    <h1
+                                        onClick={() => {
+                                            setFieldName("assignee");
+                                            setChangeAssignee(true);
+                                        }}
+                                    >
                                         {item && item?.assignee
                                             ? item?.assignee.userName
                                             : "Unassigned"}
@@ -262,9 +357,17 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                                         {priorityOptions.label}
                                                     </div>
                                                 )}
+                                                isSearchable
+                                                placeholder="Search for priority options"
+                                                onChange={setValue}
                                             />
                                         </div>
-                                        <button className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2">
+                                        <button
+                                            className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600 mt-2"
+                                            onClick={() => {
+                                                editData();
+                                            }}
+                                        >
                                             <BsCheckLg size={20} />
                                         </button>
                                         <button
@@ -279,7 +382,11 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                 ) : (
                                     <div
                                         className="flex items-center"
-                                        onClick={() => setEditPriority(true)}
+                                        onClick={() => {
+                                            setEditPriority(true);
+                                            setValue(matchedPriority.value);
+                                            setFieldName("priority");
+                                        }}
                                     >
                                         {matchedPriority && (
                                             <>
@@ -292,6 +399,17 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                     </div>
                                 )}
                             </div>
+                            <p
+                                contentEditable="true"
+                                suppressContentEditableWarning={true}
+                                onInput={(e) => {
+                                    setSample(e.currentTarget.textContent);
+                                }}
+                                onBlur={sampleFun}
+                            >
+                                Text inside div
+                            </p>
+                            <p>{sample && sample}</p>
                         </div>
                     </div>
                 </div>

@@ -25,11 +25,19 @@ const editTask = (value) => {
 }
 
 const getBoardNames = () => {
-    return userAxiosInstance.get("/get-board-names",{ withCredentials: true })
+    return userAxiosInstance.get("/get-board-names", { withCredentials: true })
 }
 
 const editChangeBoard = (value) => {
-    return userAxiosInstance.post("/change-board",value, {withCredentials: true})
+    return userAxiosInstance.post("/change-board", value, { withCredentials: true })
+}
+
+const addComment = (value) => {
+    return userAxiosInstance.post("/add-comment", value, { withCredentials: true })
+}
+
+const deleteTask = (boardName, taskId) => {
+    return userAxiosInstance.get(`/delete-board/${boardName}/${taskId}`, { withCredentials: true })
 }
 
 export {
@@ -40,5 +48,7 @@ export {
     dragAndDropTask,
     editTask,
     getBoardNames,
-    editChangeBoard
+    editChangeBoard,
+    addComment,
+    deleteTask
 }

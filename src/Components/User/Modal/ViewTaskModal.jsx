@@ -8,14 +8,17 @@ import {
     editTask,
     getBoardNames,
     editChangeBoard,
+    addComment,
+    deleteTask,
 } from "../../../Services/boardApi";
 import { useSelector } from "react-redux";
 import { getAccessMembersList } from "../../../Services/userApi";
+import { CommentCard } from "../cards/CommentCard";
+import Modal from "../Modal/Modal";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 export const ViewTaskModal = ({ item, boardName, getData }) => {
     // for showing the edite option
-    const [taskNameEdite, setTaskNameEdite] = useState(false);
-    const [descriptionEdit, setDescriptionEdit] = useState(false);
     const [changeAssignee, setChangeAssignee] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
     const [changeStatus, setChangeStatus] = useState(false);
@@ -25,8 +28,7 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
     const [fieldName, setFieldName] = useState("");
     const [changeBoard, setChangeBoard] = useState("");
     const [comment, setComment] = useState("");
-
-    const [sample, setSample] = useState("");
+    const [deleteModal, setDeleteModal] = useState(false);
 
     const [accessMemberList, setAcessMemberList] = useState([]);
     const [boardNames, setBoardNames] = useState([]);
@@ -106,15 +108,35 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
             .catch((error) => console.log(error));
     };
 
-    const sampleFun = () => {
-        console.log(sample)
-    }
+    // for adding commetn
+    const createComment = () => {
+        addComment({
+            comment: comment,
+            userId: userId,
+            boardName: boardName,
+            taskId: item.taskId,
+        })
+            .then((res) => {
+                console.log(res.data);
+                getData();
+            })
+            .catch((error) => console.log(error));
+    };
 
-    console.log(value);
+    // for deleting the task
+    const taskDelete = () => {
+        deleteTask(boardName,value)
+            .then((res) => {
+                console.log(res);
+                setDeleteModal(false);
+                getData()
+            })
+            .catch((error) => console.log(error));
+    };
 
     return (
         <>
-            <div className="overflow-auto p-2">
+            <div className="overflow-auto max-h-screen p-2">
                 <div className="w-[1000px] ">
                     <div className="flex justify-between items-center ">
                         <div>
@@ -130,108 +152,74 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                             </span>
                         </div>
                         <div>
-                            <RiDeleteBin6Line size={20} color="gray" />
+                            <RiDeleteBin6Line
+                                size={20}
+                                color="gray"
+                                className="hover:cursor-pointer"
+                                onClick={() => {
+                                    setValue(item.taskId);
+                                    setDeleteModal(true);
+                                }}
+                            />
                         </div>
                     </div>
                     <div className="flex p-3">
                         <div className="w-4/6 p-1">
-                            {taskNameEdite ? (
-                                <div className="mb-3">
-                                    <div>
-                                        <textarea
-                                            name=""
-                                            id=""
-                                            cols="65"
-                                            rows="2"
-                                            value={value}
-                                            onChange={(e) =>
-                                                setValue(e.target.value)
-                                            }
-                                        ></textarea>
-                                    </div>
-                                    <button
-                                        className="p-2 bg-blue-700 rounded-md text-white mr-2 hover:bg-blue-600"
-                                        onClick={() => {
-                                            editData();
-                                        }}
-                                    >
-                                        <BsCheckLg size={20} />
-                                    </button>
-                                    <button
-                                        className="p-2 rounded-md hover:bg-gray-300"
-                                        onClick={() => setTaskNameEdite(false)}
-                                    >
-                                        <RxCross2 size={20} />
-                                    </button>
-                                </div>
-                            ) : (
-                                <div
-                                    className="mb-3"
-                                    onClick={() => {
-                                        setValue(item?.shortSummary);
-                                        setFieldName("shortSummary");
-                                        setTaskNameEdite(true);
+                            <div
+                                className="mb-3"
+                                onClick={() => {
+                                    setValue(item?.shortSummary);
+                                    setFieldName("shortSummary");
+                                    setTaskNameEdite(true);
+                                }}
+                            >
+                                <h1
+                                    contentEditable="true"
+                                    className="font-medium text-2xl hover:bg-gray-200 p-1"
+                                    suppressContentEditableWarning={true}
+                                    onInput={(e) => {
+                                        setValue(e.currentTarget.textContent);
                                     }}
+                                    onClick={() => {
+                                        setFieldName("shortSummary");
+                                    }}
+                                    onBlur={editData}
                                 >
-                                    <h1 className="font-medium text-2xl hover:bg-gray-200 p-1">
-                                        {item && item?.shortSummary}
-                                    </h1>
-                                </div>
-                            )}
+                                    {item && item?.shortSummary}
+                                </h1>
+                            </div>
 
                             <div className="mb-3">
                                 <h1 className="font-medium mb-2">
                                     Description
                                 </h1>
                                 <div className="text-gray-700">
-                                    {descriptionEdit ? (
-                                        <>
-                                            <div>
-                                                <textarea
-                                                    name=""
-                                                    id=""
-                                                    cols="65"
-                                                    rows="5"
-                                                    value={value}
-                                                    onChange={(e) =>
-                                                        setValue(e.target.value)
-                                                    }
-                                                ></textarea>
-                                            </div>
-                                            <button
-                                                className="p-2 bg-blue-700 rounded-sm text-white mr-2 hover:bg-blue-600"
-                                                onClick={() => {
-                                                    editData();
-                                                }}
-                                            >
-                                                Save
-                                            </button>
-                                            <button
-                                                className="p-2 rounded-sm hover:bg-gray-300"
-                                                onClick={() =>
-                                                    setDescriptionEdit(false)
-                                                }
-                                            >
-                                                Cancel
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <div
-                                            onClick={() => {
-                                                setValue(item?.description);
-                                                setFieldName("description");
-                                                setDescriptionEdit(true);
+                                    <div
+                                        onClick={() => {
+                                            setValue(item?.description);
+                                            setFieldName("description");
+                                            setDescriptionEdit(true);
+                                        }}
+                                    >
+                                        <p
+                                            className="min-h-[70px] p-2"
+                                            contentEditable="true"
+                                            suppressContentEditableWarning={
+                                                true
+                                            }
+                                            defaultValue="click here to add description"
+                                            onInput={(e) => {
+                                                setValue(
+                                                    e.currentTarget.textContent
+                                                );
                                             }}
+                                            onBlur={editData}
                                         >
-                                            {item && (
-                                                <p
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: item.description,
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                    )}
+                                            {item && item.description
+                                                ? item.description
+                                                : ""}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                             <div className="py-3">
@@ -250,7 +238,10 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                                 setComment(e.target.value);
                                             }}
                                         ></textarea>
-                                        <button className="py-1 px-3 rounded-sm bg-blue-700 text-white hover:bg-blue-600 mr-2">
+                                        <button
+                                            className="py-1 px-3 rounded-sm bg-blue-700 text-white hover:bg-blue-600 mr-2"
+                                            onClick={createComment}
+                                        >
                                             save
                                         </button>
                                         <button className="py-1 px-3 rounded-sm hover:bg-gray-200">
@@ -258,6 +249,14 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                         </button>
                                     </div>
                                 </div>
+                                {/* command card */}
+                                {item &&
+                                    item?.comments.map((comment, index) => (
+                                        <CommentCard
+                                            comment={comment}
+                                            key={index}
+                                        />
+                                    ))}
                             </div>
                         </div>
                         <div className="w-3/6 p-1">
@@ -399,21 +398,16 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                     </div>
                                 )}
                             </div>
-                            <p
-                                contentEditable="true"
-                                suppressContentEditableWarning={true}
-                                onInput={(e) => {
-                                    setSample(e.currentTarget.textContent);
-                                }}
-                                onBlur={sampleFun}
-                            >
-                                Text inside div
-                            </p>
-                            <p>{sample && sample}</p>
                         </div>
                     </div>
                 </div>
             </div>
+            <Modal
+                isVisible={deleteModal}
+                onClose={() => setDeleteModal(false)}
+            >
+                <DeleteConfirmModal onclose={() => setDeleteModal(false)} onDelete={taskDelete} />
+            </Modal>
         </>
     );
 };

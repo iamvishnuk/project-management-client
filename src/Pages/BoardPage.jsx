@@ -13,6 +13,7 @@ const BoardPage = () => {
     const getData = () => {
         getBoardData(_id)
             .then((res) => {
+                console.log(res.data.boardData)
                 setBoardData(res.data.boardData);
             })
             .catch((error) => console.log(error.message));

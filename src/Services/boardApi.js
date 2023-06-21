@@ -27,7 +27,7 @@ const editTask = (value) => {
 const getBoardNames = () => {
     return userAxiosInstance.get("/get-board-names", { withCredentials: true })
 }
-
+//for changing status of the task
 const editChangeBoard = (value) => {
     return userAxiosInstance.post("/change-board", value, { withCredentials: true })
 }
@@ -40,6 +40,14 @@ const deleteTask = (boardName, taskId) => {
     return userAxiosInstance.get(`/delete-board/${boardName}/${taskId}`, { withCredentials: true })
 }
 
+const deleteComment = (boardName, taskId, commentId) => {
+    return userAxiosInstance.get(`/delete-comment/${boardName}/${taskId}/${commentId}`,{ withCredentials: true })
+}
+
+const editTimeSpend = (value) => {
+    return userAxiosInstance.post('/change-time-spend',value, { withCredentials: true })
+}
+
 export {
     createBoard,
     getBoardData,
@@ -50,5 +58,7 @@ export {
     getBoardNames,
     editChangeBoard,
     addComment,
-    deleteTask
+    deleteTask,
+    deleteComment,
+    editTimeSpend
 }

@@ -10,12 +10,15 @@ import {
     editChangeBoard,
     addComment,
     deleteTask,
+    editTimeSpend,
 } from "../../../Services/boardApi";
 import { useSelector } from "react-redux";
 import { getAccessMembersList } from "../../../Services/userApi";
 import { CommentCard } from "../cards/CommentCard";
 import Modal from "../Modal/Modal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import { MdOutlineTimer } from "react-icons/md";
+import { toast } from "react-toastify";
 
 export const ViewTaskModal = ({ item, boardName, getData }) => {
     // for showing the edite option
@@ -69,8 +72,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                 getData();
                 setChangeAssignee(false);
                 setEditPriority(false);
-                setDescriptionEdit(false);
-                setTaskNameEdite(false);
             })
             .catch((error) => {
                 console.log(error);
@@ -125,18 +126,36 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
 
     // for deleting the task
     const taskDelete = () => {
-        deleteTask(boardName,value)
+        deleteTask(boardName, value)
             .then((res) => {
-                console.log(res);
                 setDeleteModal(false);
-                getData()
+                getData();
             })
             .catch((error) => console.log(error));
     };
 
+    const changeTimeSpend = () => {
+        editTimeSpend({
+            value: value,
+            boardName: boardName,
+            taskId: item._id,
+            fieldName: fieldName,
+            workHours: item.workHours,
+        })
+            .then((res) => {
+                getData();
+            })
+            .catch((error) => {
+                toast.error(error.response.data.message);
+            });
+    };
+
+    // Calculate the percentage of worked hours relative to the total hours
+    const percentage = (item.timeSpend / item.workHours) * 100;
+
     return (
         <>
-            <div className="overflow-auto max-h-screen p-2">
+            <div className="overflow-auto max-h-[90vh] p-2">
                 <div className="w-[1000px] ">
                     <div className="flex justify-between items-center ">
                         <div>
@@ -170,7 +189,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                 onClick={() => {
                                     setValue(item?.shortSummary);
                                     setFieldName("shortSummary");
-                                    setTaskNameEdite(true);
                                 }}
                             >
                                 <h1
@@ -198,7 +216,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                         onClick={() => {
                                             setValue(item?.description);
                                             setFieldName("description");
-                                            setDescriptionEdit(true);
                                         }}
                                     >
                                         <p
@@ -255,6 +272,9 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                         <CommentCard
                                             comment={comment}
                                             key={index}
+                                            boarName={boardName}
+                                            taskId={item.taskId}
+                                            getData={getData}
                                         />
                                     ))}
                             </div>
@@ -398,6 +418,51 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                                     </div>
                                 )}
                             </div>
+                            <div className="mb-5">
+                                <h1 className="font-medium text-sm text-gray-500 mb-1 uppercase">
+                                    Time Spent{" "}
+                                    <span className="lowercase">(hours)</span>
+                                </h1>
+                                <h1
+                                    className="border py-1 pl-1 rounded-sm hover:cursor-pointer"
+                                    contentEditable="true"
+                                    suppressContentEditableWarning={true}
+                                    onInput={(e) => {
+                                        setValue(e.currentTarget.textContent);
+                                    }}
+                                    onClick={() => {
+                                        setFieldName("timeSpend");
+                                    }}
+                                    onBlur={changeTimeSpend}
+                                >
+                                    {item && item.timeSpend}
+                                </h1>
+                            </div>
+                            <div className="">
+                                <div>
+                                    <h1 className="font-medium text-sm text-gray-500 mb-1 uppercase">
+                                        Time Tracking
+                                    </h1>
+                                </div>
+                                <div className="flex items-center">
+                                    <div>
+                                        <MdOutlineTimer
+                                            size={28}
+                                            color="gray"
+                                        />
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                                        <div
+                                            className="bg-blue-600 h-1.5 rounded-full"
+                                            style={{ width: `${percentage}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-sm font-medium text-black">
+                                        {item && item.workHours}
+                                        <span>h</span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -406,7 +471,10 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                 isVisible={deleteModal}
                 onClose={() => setDeleteModal(false)}
             >
-                <DeleteConfirmModal onclose={() => setDeleteModal(false)} onDelete={taskDelete} />
+                <DeleteConfirmModal
+                    onclose={() => setDeleteModal(false)}
+                    onDelete={taskDelete}
+                />
             </Modal>
         </>
     );

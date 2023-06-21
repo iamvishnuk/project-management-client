@@ -14,6 +14,7 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
     const [description, setDescription] = useState("");
     const [assignee, setAssignee] = useState(null);
     const [priority, setPriority] = useState(null);
+    const [workHours, setWorkHours] = useState(null)
     const { _id } = useSelector((state) => state.project.value);
 
     // data for create task function
@@ -23,6 +24,7 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
         description: description,
         assignee: assignee && assignee.value,
         priority: priority && priority.value,
+        workHours: workHours,
     };
 
     useEffect(() => {
@@ -103,6 +105,21 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                             ></textarea>
+                        </div>
+                        <div className="mb-6">
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Work Hours
+                            </label>
+                            <input
+                                type="number"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Enter the work hour"
+                                name="workHours"
+                                value={workHours}
+                                onChange={(e) =>
+                                    setWorkHours(e.target.value)
+                                }
+                            />
                         </div>
                         <div className="mb-6">
                             <label

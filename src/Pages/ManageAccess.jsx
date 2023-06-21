@@ -21,8 +21,14 @@ const ManageAccess = () => {
 
     // for changing members array for the select method
     const options = members
-        .filter((items) => {
-            return items._id !== projectLead._id;
+        .filter((item) => {
+            const accessMemberIds = accessMemberList.map(
+                (member) => member._id
+            );
+            return (
+                !accessMemberIds.includes(item._id) &&
+                item._id !== projectLead._id
+            );
         })
         .map((data) => {
             return { value: data._id, label: data.userName };
@@ -58,7 +64,7 @@ const ManageAccess = () => {
                 console.log(res);
                 toast.success(res.data.message);
                 showModal(false);
-                getAccessMember()
+                getAccessMember();
             })
             .catch((error) => {
                 console.log(error);

@@ -84,7 +84,25 @@ const Sidebar = () => {
                             Team
                         </span>
                     </li>
-                    <li onClick={() => navigate("/user-profile")} className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md">
+                    <li
+                        onClick={() => navigate("/schedule-meeting")}
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                    >
+                        <div className="w-6 flex justify-center">
+                            <i className="fa-solid fa-calendar-plus text-xl"></i>
+                        </div>
+                        <span
+                            className={`${
+                                !open && "hidden"
+                            } orign-left duration-200`}
+                        >
+                            Schedule Meeting
+                        </span>
+                    </li>
+                    <li
+                        onClick={() => navigate("/user-profile")}
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                    >
                         <div className="w-6 flex justify-center">
                             <i className="fa-solid fa-user text-xl"></i>
                         </div>

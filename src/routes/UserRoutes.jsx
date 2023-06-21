@@ -20,6 +20,7 @@ import ManageAccess from "../Pages/ManageAccess";
 import DefaultLayout from "../Layout/DefaultLayout";
 import ManagePeople from "../Pages/ManagePeople";
 import { ViewTeam } from "../Pages/ViewTeam";
+import ScheduleMeeting from "../Pages/ScheduleMeeting";
 
 
 function UserRoutes() {
@@ -38,6 +39,7 @@ function UserRoutes() {
                     <Route path="/edit-project/:id" element={<EditProject />} />
                     <Route path="/manage-team/manage-people" element={<ManagePeople />} />
                     <Route path="/manage-team/:id" element={<ViewTeam />} />
+                    <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
                 </Route>
                 {/* <Route path="/plan-pricing" element={<PlanPricingPage />} /> */}
                 <Route element={<ProjectManagementLayout />}>

@@ -138,11 +138,18 @@ const removeAcess = (memberId, projectId) => {
     return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`, { withCredentials: true })
 }
 
+// ------------------------ API RELATED TO SCHEDULE MEETINGS -----------------------    
+const createEvent = (value) => {
+    return userAxiosInstance.post("/create-event",value, { withCredentials: true})
+}
 
+const getEvent = (userId) => {
+    return userAxiosInstance.get(`/get-events/${userId}`, {withCredentials: true})
+}
 
 export {
     userRegisteration,
-    signupWithGoogle,
+    signupWithGoogle, 
     userLogin,
     loginWithGoogle,
     emailVerification,
@@ -172,5 +179,7 @@ export {
     getSingleTeam,
     removeTeamMember,
     addTeamMember,
-    deleteTeam
+    deleteTeam,
+    createEvent,
+    getEvent
 }

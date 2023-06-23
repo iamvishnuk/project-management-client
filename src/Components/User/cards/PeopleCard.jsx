@@ -11,7 +11,7 @@ const PeopleCard = ({ people }) => {
                     >
                         <div className="flex flex-col items-center py-5">
                             <img
-                                className="w-24 h-24 mb-3 rounded-full shadow-lg"
+                                className="w-24 h-24 mb-3 rounded-full shadow-lg object-cover"
                                 src={
                                     user.image
                                         ? user.image

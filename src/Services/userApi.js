@@ -36,6 +36,19 @@ const forgotPassword = (id, value) => {
 const isAuthUser = () => {
     return userAxiosInstance.get("/is-auth-user", { withCredentials: true })
 }
+
+const getUserProfile = (userId) => {
+    return userAxiosInstance.get(`/get-user-details/${userId}`, { withCredentials: true })
+}
+
+const editUserDetails = (values) => {
+    return userAxiosInstance.post("/edite-user-details", values, { withCredentials: true })
+}
+
+const uploadImage = (value) => {
+    return userAxiosInstance.post("/image-upload", value, { headers: { "content-type": "multipart/form-data", },withCredentials:true})
+}
+
 // ----------------- end of api related to user -------------------------------
 
 
@@ -79,19 +92,19 @@ const removePeople = (id) => {
 }
 
 const getSingleTeam = (id) => {
-    return userAxiosInstance.get(`/get-single-team/${id}`,{withCredentials: true})
+    return userAxiosInstance.get(`/get-single-team/${id}`, { withCredentials: true })
 }
 
-const removeTeamMember = (teamId,memberId) => {
-    return userAxiosInstance.get(`/remove-team-member/${teamId}/${memberId}`,{withCredentials: true})
+const removeTeamMember = (teamId, memberId) => {
+    return userAxiosInstance.get(`/remove-team-member/${teamId}/${memberId}`, { withCredentials: true })
 }
 
-const addTeamMember = (teamId,member) => {
-    return userAxiosInstance.post(`/add-team-memeber/${teamId}`,member,{withCredentials: true})
+const addTeamMember = (teamId, member) => {
+    return userAxiosInstance.post(`/add-team-memeber/${teamId}`, member, { withCredentials: true })
 }
 
 const deleteTeam = (teamId) => {
-    return userAxiosInstance.get(`/delete-team/${teamId}`,{withCredentials: true})
+    return userAxiosInstance.get(`/delete-team/${teamId}`, { withCredentials: true })
 }
 
 // ------------------- end of api related to team management --------------------
@@ -140,16 +153,18 @@ const removeAcess = (memberId, projectId) => {
 
 // ------------------------ API RELATED TO SCHEDULE MEETINGS -----------------------    
 const createEvent = (value) => {
-    return userAxiosInstance.post("/create-event",value, { withCredentials: true})
+    return userAxiosInstance.post("/create-event", value, { withCredentials: true })
 }
 
 const getEvent = (userId) => {
-    return userAxiosInstance.get(`/get-events/${userId}`, {withCredentials: true})
+    return userAxiosInstance.get(`/get-events/${userId}`, { withCredentials: true })
 }
+// -------------------- END OF API RELATED TO SCHEDULE MEETING ---------------------- 
+
 
 export {
     userRegisteration,
-    signupWithGoogle, 
+    signupWithGoogle,
     userLogin,
     loginWithGoogle,
     emailVerification,
@@ -181,5 +196,8 @@ export {
     addTeamMember,
     deleteTeam,
     createEvent,
-    getEvent
+    getEvent,
+    getUserProfile,
+    editUserDetails,
+    uploadImage,
 }

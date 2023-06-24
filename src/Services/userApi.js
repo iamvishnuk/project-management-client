@@ -151,6 +151,10 @@ const removeAcess = (memberId, projectId) => {
     return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`, { withCredentials: true })
 }
 
+const getAssignedTask = (projectId) => {
+    return userAxiosInstance.get(`/get-assigned-task/${projectId}`, { withCredentials: true })
+}
+
 // ------------------------ API RELATED TO SCHEDULE MEETINGS -----------------------    
 const createEvent = (value) => {
     return userAxiosInstance.post("/create-event", value, { withCredentials: true })
@@ -200,4 +204,5 @@ export {
     getUserProfile,
     editUserDetails,
     uploadImage,
+    getAssignedTask,
 }

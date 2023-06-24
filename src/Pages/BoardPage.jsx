@@ -27,7 +27,7 @@ const BoardPage = () => {
     const handleDragEnd = ({ destination, source }) => {
         console.log("destination:", destination, "source:", source);
         if (destination.droppableId === source.droppableId) return;
-        dragAndDropTask({ destination: destination, source: source })
+        dragAndDropTask({ destination: destination, source: source, projectId: _id })
             .then((res) => {
                 console.log(res);
                 getData();

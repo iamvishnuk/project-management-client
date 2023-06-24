@@ -27,18 +27,27 @@ const ProjectSidebar = () => {
                         </div>
                         <span className="lg:block md:hidden">Board</span>
                     </li>
-                    {/* <li className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md lg:justify-start md:justify-center">
+                    <li
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md lg:justify-start md:justify-center"
+                        onClick={() =>
+                            navigate(
+                                `/project-management/${projectName}/assinged-to-me`
+                            )
+                        }
+                    >
                         <div className="w-6 flext justify-center">
-                            <i className="fa-solid fa-gear  text-xl"></i>
+                            <i className="fa-solid fa-user-pen text-xl"></i>
                         </div>
                         <span className="lg:block md:hidden">
-                            Project Management
+                            Assigned to me
                         </span>
-                    </li> */}
+                    </li>
                     <li
                         className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md lg:justify-start md:justify-center"
                         onClick={() => {
-                            navigate("/project-management/manage-access");
+                            navigate(
+                                `/project-management/${projectName}/manage-access`
+                            );
                         }}
                     >
                         <div className="w-6 flex justify-center">

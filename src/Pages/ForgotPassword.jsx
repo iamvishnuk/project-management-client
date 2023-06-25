@@ -12,12 +12,10 @@ const ForgotPassword = () => {
         setLoading(!loading);
         forgotPasswordSendEmail(email)
             .then((res) => {
-                console.log(res)
                 toast.success(res.data.message);
                 setLoading(false);
             })
             .catch((err) => {
-                console.log(err)
                 toast.error(err.response.data.message);
                 setLoading(false);
             });

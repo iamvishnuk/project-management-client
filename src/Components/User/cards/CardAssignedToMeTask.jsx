@@ -12,25 +12,37 @@ export const CardAssignedToMeTask = ({ assignedTask }) => {
                                 <h1 className="mb-2">
                                     {value && value.boardName}{" "}
                                 </h1>
-                                {assignedTask &&
-                                    value.task.map((item, innerIndex) => {
-                                        // Renamed index to innerIndex
-                                        return (
-                                            <div
-                                                className="h-14 rounded-md bg-gray-100 flex items-center px-2 hover:bg-gray-200"
-                                                key={innerIndex}
-                                            >
-                                                {item.taskType ===
-                                                    "New task" && (
-                                                    <RiTaskFill color="blue" size={25} />
-                                                )}
-                                                {item.taskType === "Bug" && (
-                                                    <FaBug color="red" size={25} />
-                                                )}
-                                                <h1 className="ml-2">{ item && item.shortSummary}</h1>
-                                            </div>
-                                        );
-                                    })}
+                                <div className="grid gap-2">
+                                    {assignedTask &&
+                                        value.task.map((item, innerIndex) => {
+                                            // Renamed index to innerIndex
+                                            return (
+                                                <div
+                                                    className="h-14 rounded-md bg-gray-100 flex items-center px-2 hover:bg-gray-200"
+                                                    key={innerIndex}
+                                                >
+                                                    {item.taskType ===
+                                                        "New task" && (
+                                                        <RiTaskFill
+                                                            color="blue"
+                                                            size={25}
+                                                        />
+                                                    )}
+                                                    {item.taskType ===
+                                                        "Bug" && (
+                                                        <FaBug
+                                                            color="red"
+                                                            size={25}
+                                                        />
+                                                    )}
+                                                    <h1 className="ml-2">
+                                                        {item &&
+                                                            item.shortSummary}
+                                                    </h1>
+                                                </div>
+                                            );
+                                        })}
+                                </div>
                             </div>
                         );
                     })}

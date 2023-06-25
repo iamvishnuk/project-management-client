@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { IoIosRemoveCircle } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,6 +14,7 @@ import Modal from "../Components/User/Modal/Modal";
 import Select from "react-select";
 import { BiExit } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { TeamDiscussion } from "../Components/User/Chat/TeamDiscussion";
 
 export const ViewTeam = () => {
     const [team, setTeam] = useState(null);
@@ -34,7 +35,6 @@ export const ViewTeam = () => {
     const getData = () => {
         getSingleTeam(params.id)
             .then((res) => {
-                console.log(res.data);
                 setTeam(res.data.team);
             })
             .catch((error) => {
@@ -68,7 +68,7 @@ export const ViewTeam = () => {
         removeTeamMember(params.id, userId)
             .then((res) => {
                 toast.success("You exited the team");
-                navigate("/manage-team")
+                navigate("/manage-team");
             })
             .catch((error) => console.log(error.message));
     };
@@ -96,7 +96,7 @@ export const ViewTeam = () => {
 
     return (
         <>
-            <div className="flex">
+            <div className="flex h-full">
                 <div className="md:w-2/6 lg:w-1/4">
                     <h1 className="font-bold text-xl">
                         {team && team.teamName}
@@ -168,10 +168,8 @@ export const ViewTeam = () => {
                     </div>
                 </div>
                 <div className="w-full p-3">
-                    <h1 className="font-medium">Team Activity</h1>
-                    <div className="w-full border-2 rounded-md shadow ">
-                        There is no work to see
-                    </div>
+                    <h1 className="font-medium">Team Discussion</h1>
+                    <TeamDiscussion />
                 </div>
             </div>
             {/* ADD MEMBERS MODAL */}

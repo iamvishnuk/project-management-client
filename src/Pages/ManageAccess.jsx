@@ -39,7 +39,6 @@ const ManageAccess = () => {
         getAccessMembersList(_id)
             .then((res) => {
                 setAcessMemberList(res.data.accessMemberList);
-                console.log(res);
             })
             .catch((error) => {
                 console.log(error);
@@ -61,7 +60,6 @@ const ManageAccess = () => {
     const add = () => {
         giveAccessToProject(_id, access)
             .then((res) => {
-                console.log(res);
                 toast.success(res.data.message);
                 showModal(false);
                 getAccessMember();

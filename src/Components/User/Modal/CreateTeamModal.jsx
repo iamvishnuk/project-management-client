@@ -26,7 +26,6 @@ const CreateTeamModal = ({ onClose, getTeam }) => {
     const create = () => {
         createTeam({ member: teamMembers, teamName: teamName })
             .then((res) => {
-                console.log(res);
                 toast.success(res.data.message);
                 getTeam();
                 onClose();

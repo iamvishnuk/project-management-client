@@ -9,7 +9,6 @@ export const ManagePeopleTable = () => {
     const [people, setPeople] = useState([]);
     const [modal, showModal] = useState(false);
     const [userId, setUserId] = useState("");
-    console.log(userId);
 
     const fetchData = () => {
         getAllPeople()
@@ -22,10 +21,8 @@ export const ManagePeopleTable = () => {
     }, []);
 
     const remove = () => {
-        console.log("function called");
         removePeople(userId)
             .then((res) => {
-                console.log(res);
                 toast.success(res.data.message);
                 fetchData();
                 showModal(false);

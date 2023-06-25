@@ -165,6 +165,14 @@ const getEvent = (userId) => {
 }
 // -------------------- END OF API RELATED TO SCHEDULE MEETING ---------------------- 
 
+// --------------------- API RELATED TO CHAT IN TEAM --------------------------
+const addMessage = (values) => {
+    return userAxiosInstance.post("/add-chat",values, { withCredentials: true})
+}
+
+const getAllMessage = (teamId) => {
+    return userAxiosInstance.get(`/get-all-message/${teamId}`, { withCredentials: true})
+}
 
 export {
     userRegisteration,
@@ -205,4 +213,6 @@ export {
     editUserDetails,
     uploadImage,
     getAssignedTask,
+    addMessage,
+    getAllMessage,
 }

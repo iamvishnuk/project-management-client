@@ -4,7 +4,7 @@ const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
 const createAxiosClient = (baseURL) => {
     const client = axios.create({
         baseURL,
-        timeout: 5000,
+        timeout: 8000,
         timeoutErrorMessage: "Request timeout... Please Try Again",
     });
     return client

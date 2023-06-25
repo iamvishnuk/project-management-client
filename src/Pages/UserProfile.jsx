@@ -34,7 +34,6 @@ const UserProfile = () => {
         };
         editUserDetails(data)
             .then((res) => {
-                console.log(res);
                 getData();
             })
             .catch((error) => console.log(error));
@@ -51,7 +50,6 @@ const UserProfile = () => {
         formData.append("image",file)
         uploadImage(formData)
             .then((res) => {
-                console.log(res);
                 getData()
                 setUploading(false)
             })

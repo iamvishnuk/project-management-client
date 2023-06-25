@@ -50,7 +50,6 @@ export default function ScheduleMeeting() {
     const fecthData = () => {
         getEvent(userId)
             .then((res) => {
-                console.log(res.data);
                 setEvent(res.data.eventData);
             })
             .catch((error) => {

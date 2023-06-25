@@ -39,7 +39,6 @@ const ManageCeteogry = () => {
     const getCategoryDetail = async () => {
         getCategory()
             .then((response) => {
-                console.log(response);
                 setCategoryData(response.data.data);
             })
             .catch((err) => console.log(err));

@@ -1,5 +1,6 @@
 import axios from "axios";
 const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+import logoutUser from "../Helper/LogoutHelper";
 
 const createAxiosClient = (baseURL) => {
     const client = axios.create({
@@ -18,11 +19,23 @@ const attackToken = (req, tokenName) => {
     return req
 };
 
+const handleUnauthorizedError = (error) => {
+    if(error.response && error.response.status === 401) { 
+        logoutUser()
+    }
+    return Promise.reject(error)
+}
+
 const userAxiosInstance = createAxiosClient(baseURL);
 userAxiosInstance.interceptors.request.use(async (req) => {
     const modifiedReq = attackToken(req, "userToken");
     return modifiedReq;
 });
+
+userAxiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => handleUnauthorizedError(error)
+);
 
 export {userAxiosInstance} 
 

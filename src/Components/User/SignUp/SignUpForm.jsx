@@ -48,7 +48,7 @@ function SignUpForm() {
         const userDetails = jwtDecode(response.credential);
         signupWithGoogle(userDetails).then(res => {
             localStorage.setItem("userToken",res.data.token)
-            dispatch(changeUserDetails({ userId: res.data.userId }));
+            dispatch(changeUserDetails({ userId: res.data.userId, userName: res.data.userName }));
             toast.success(res.data.message)
             navigate("/project-management");
         }).catch(error => {

@@ -7,36 +7,54 @@ import { useParams } from "react-router-dom";
 
 export const TeamDiscussion = () => {
     const socket = useRef();
+    const scroll = useRef();
     const [value, setValue] = useState("");
     const { userId } = useSelector((state) => state.user);
     const params = useParams();
     const teamId = params.id;
     const [message, setMessage] = useState([]);
 
+    // for handing the message submit
     const handleSumbit = (e) => {
         e.preventDefault();
-        addMessage({ message: value, teamId: teamId }).then((res) => {});
-        socket.current.emit("send-message");
+        addMessage({ message: value, teamId: teamId })
+            .then((res) => {
+                socket.current.emit("send-message", res.data.data);
+            })
+            .catch((err) => console.log("addMessage", err.message));
         setValue("");
     };
 
+    // getting the previous msg on the component mount
     const getMsg = () => {
-        getAllMessage(teamId).then((res) => {
-            setMessage(res.data.message);
-        });
+        getAllMessage(teamId)
+            .then((res) => {
+                setMessage(res.data.message);
+            })
+            .catch((err) => console.log("getMsg", err.message));
     };
 
+    // listening of the -- recieved-msg -- event and update the state
     socket.current &&
-        socket.current.on("receved-msg", () => {
-            getMsg();
+        socket.current.on("receved-msg", (newMessage) => {
+            setMessage([...message, newMessage]);
         });
+
+    // for scolling the message div automatically when a new message come
+    useEffect(() => {
+        scroll.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, [message]);
 
     useEffect(() => {
         getMsg();
-    }, []);
-
-    useEffect(() => {
         socket.current = io(baseURL);
+        socket.current.emit("join-room", teamId);
+        return () => {
+            // Clean up scoket connection on component unmount
+            if (socket.current) {
+                socket.current.disconnect();
+            }
+        };
     }, []);
 
     return (
@@ -45,7 +63,7 @@ export const TeamDiscussion = () => {
                 <div className="h-[90%] border-b-2 overflow-auto">
                     <div>
                         <div className="flex flex-col h-full overflow-x-auto mb-4">
-                            <div className="flex flex-col h-full">
+                            <div ref={scroll} className="flex flex-col h-full">
                                 <div className="grid grid-cols-12 gap-y-2">
                                     {message.map((data, index) => {
                                         return (
@@ -61,7 +79,9 @@ export const TeamDiscussion = () => {
                                                             </div>
                                                             <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
                                                                 <div>
-                                                                    {data.text}
+                                                                    {
+                                                                        data.message
+                                                                    }
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -77,7 +97,9 @@ export const TeamDiscussion = () => {
                                                             </div>
                                                             <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
                                                                 <div>
-                                                                    {data.text}
+                                                                    {
+                                                                        data.message
+                                                                    }
                                                                 </div>
                                                             </div>
                                                         </div>

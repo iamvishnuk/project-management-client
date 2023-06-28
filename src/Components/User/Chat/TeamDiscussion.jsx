@@ -1,9 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import io from "socket.io-client";
 const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
-import { addMessage, getAllMessage } from "../../../Services/userApi";
+import {
+    addMessage,
+    getAllMessage,
+    sendImageMessage,
+} from "../../../Services/userApi";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import Modal from "../Modal/Modal";
+import { ChatImageZoom } from "../Modal/ChatImageZoom";
 
 export const TeamDiscussion = () => {
     const socket = useRef();
@@ -13,6 +19,8 @@ export const TeamDiscussion = () => {
     const params = useParams();
     const teamId = params.id;
     const [message, setMessage] = useState([]);
+    const [ImageModal, setImageModal] = useState(false);
+    const [imageUrl, setImageUrl] = useState("");
 
     // for handing the message submit
     const handleSumbit = (e) => {
@@ -32,6 +40,19 @@ export const TeamDiscussion = () => {
                 setMessage(res.data.message);
             })
             .catch((err) => console.log("getMsg", err.message));
+    };
+
+    // sending image in chat
+    const handleImageChanges = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("image", file);
+        sendImageMessage(formData, teamId)
+            .then((res) => {
+                socket.current.emit("send-message", res.data.data);
+            })
+            .catch((err) => console.log(err));
     };
 
     // listening of the -- recieved-msg -- event and update the state
@@ -77,12 +98,36 @@ export const TeamDiscussion = () => {
                                                                         ?.userName[0]
                                                                 }
                                                             </div>
-                                                            <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                                                                <div>
-                                                                    {
+                                                            <div
+                                                                className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl"
+                                                                onClick={() => {
+                                                                    setImageUrl(
                                                                         data.message
-                                                                    }
-                                                                </div>
+                                                                    );
+                                                                    setImageModal(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {data.message.substring(
+                                                                    0,
+                                                                    4
+                                                                ) === "http" ? (
+                                                                    <div>
+                                                                        <img
+                                                                            src={
+                                                                                data.message
+                                                                            }
+                                                                            alt=""
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div>
+                                                                        {
+                                                                            data.message
+                                                                        }
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -95,12 +140,36 @@ export const TeamDiscussion = () => {
                                                                         ?.userName[0]
                                                                 }
                                                             </div>
-                                                            <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                                                                <div>
-                                                                    {
+                                                            <div
+                                                                className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl"
+                                                                onClick={() => {
+                                                                    setImageUrl(
                                                                         data.message
-                                                                    }
-                                                                </div>
+                                                                    );
+                                                                    setImageModal(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {data.message.substring(
+                                                                    0,
+                                                                    4
+                                                                ) === "http" ? (
+                                                                    <div>
+                                                                        <img
+                                                                            src={
+                                                                                data.message
+                                                                            }
+                                                                            alt=""
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div>
+                                                                        {
+                                                                            data.message
+                                                                        }
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -146,6 +215,7 @@ export const TeamDiscussion = () => {
                                     type="file"
                                     name=""
                                     id="sendImg"
+                                    onChange={handleImageChanges}
                                 />
                                 {/* <button
                                     type="button"
@@ -197,6 +267,10 @@ export const TeamDiscussion = () => {
                     </div>
                 </div>
             </div>
+            {/* image zoon modal */}
+            <Modal isVisible={ImageModal} onClose={() => setImageModal(false)}>
+                <ChatImageZoom imageUrl={imageUrl} />
+            </Modal>
         </>
     );
 };

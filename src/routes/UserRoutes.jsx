@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import LoginPage from "../Pages/LoginPage";
 import SignUpPage from "../Pages/SignUpPage";
 import ManageCeteogry from "../Pages/ManageCeteogry";
@@ -24,6 +24,17 @@ import ScheduleMeeting from "../Pages/ScheduleMeeting";
 import { AssignToMe } from "../Pages/AssignToMe";
 
 function UserRoutes() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        const verifyToken = () => {
+            const token = localStorage.getItem("userToken");
+            if (!token) {
+                navigate("/");
+            }
+        };
+        verifyToken();
+    }, [navigate]);
+
     return (
         <Routes>
             <Route path="/" element={<LoginPage />} />

@@ -174,6 +174,10 @@ const getAllMessage = (teamId) => {
     return userAxiosInstance.get(`/get-all-message/${teamId}`, { withCredentials: true})
 }
 
+const sendImageMessage = (file,teamId) => {
+    return userAxiosInstance.post(`/image-message/${teamId}`, file, { headers: { "content-type": "multipart/form-data", }, withCredentials: true })
+}
+
 export {
     userRegisteration,
     signupWithGoogle,
@@ -215,4 +219,5 @@ export {
     getAssignedTask,
     addMessage,
     getAllMessage,
+    sendImageMessage,
 }

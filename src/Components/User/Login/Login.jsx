@@ -25,7 +25,7 @@ function Login() {
             userLogin({ email: email, password: password })
                 .then((res) => {
                     localStorage.setItem("userToken", res.data.token);
-                    dispatch(changeUserDetails({ userId: res.data.userId }));
+                    dispatch(changeUserDetails({ userId: res.data.userId,userName: res.data.userName }));
                     toast.success(res.data.message);
                     navigate("/project-management");
                 })
@@ -41,7 +41,7 @@ function Login() {
         loginWithGoogle(userDetails)
             .then((res) => {
                 localStorage.setItem("userToken", res.data.token);
-                dispatch(changeUserDetails({ userId: res.data.userId }));
+                dispatch(changeUserDetails({ userId: res.data.userId, userName: res.data.userName }));
                 toast.success(res.data.message);
                 navigate("/project-management");
             })

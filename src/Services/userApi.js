@@ -151,6 +151,10 @@ const removeAcess = (memberId, projectId) => {
     return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`, { withCredentials: true })
 }
 
+const getAssignedTask = (projectId) => {
+    return userAxiosInstance.get(`/get-assigned-task/${projectId}`, { withCredentials: true })
+}
+
 // ------------------------ API RELATED TO SCHEDULE MEETINGS -----------------------    
 const createEvent = (value) => {
     return userAxiosInstance.post("/create-event", value, { withCredentials: true })
@@ -161,6 +165,18 @@ const getEvent = (userId) => {
 }
 // -------------------- END OF API RELATED TO SCHEDULE MEETING ---------------------- 
 
+// --------------------- API RELATED TO CHAT IN TEAM --------------------------
+const addMessage = (values) => {
+    return userAxiosInstance.post("/add-chat",values, { withCredentials: true})
+}
+
+const getAllMessage = (teamId) => {
+    return userAxiosInstance.get(`/get-all-message/${teamId}`, { withCredentials: true})
+}
+
+const sendImageMessage = (file,teamId) => {
+    return userAxiosInstance.post(`/image-message/${teamId}`, file, { headers: { "content-type": "multipart/form-data", }, withCredentials: true })
+}
 
 export {
     userRegisteration,
@@ -200,4 +216,8 @@ export {
     getUserProfile,
     editUserDetails,
     uploadImage,
+    getAssignedTask,
+    addMessage,
+    getAllMessage,
+    sendImageMessage,
 }

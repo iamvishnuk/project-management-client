@@ -87,7 +87,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
             .catch((error) => console.log(error));
         getBoardNames()
             .then((res) => {
-                console.log(res.data);
                 setBoardNames(res.data.boardNames);
             })
             .catch((error) => console.log(error.message));
@@ -102,7 +101,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
         };
         editChangeBoard(value)
             .then((res) => {
-                console.log(res.data);
                 getData();
                 setChangeStatus(false);
             })
@@ -118,7 +116,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
             taskId: item.taskId,
         })
             .then((res) => {
-                console.log(res.data);
                 getData();
             })
             .catch((error) => console.log(error));

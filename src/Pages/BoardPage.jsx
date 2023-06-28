@@ -13,7 +13,6 @@ const BoardPage = () => {
     const getData = () => {
         getBoardData(_id)
             .then((res) => {
-                console.log(res.data.boardData)
                 setBoardData(res.data.boardData);
             })
             .catch((error) => console.log(error.message));
@@ -25,11 +24,13 @@ const BoardPage = () => {
 
     // handling the darg and drop of cards
     const handleDragEnd = ({ destination, source }) => {
-        console.log("destination:", destination, "source:", source);
         if (destination.droppableId === source.droppableId) return;
-        dragAndDropTask({ destination: destination, source: source })
+        dragAndDropTask({
+            destination: destination,
+            source: source,
+            projectId: _id,
+        })
             .then((res) => {
-                console.log(res);
                 getData();
             })
             .catch((error) => console.log(error));

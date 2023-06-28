@@ -19,14 +19,9 @@ const ManageProjectTable = () => {
 
     // for getting the all project data
     const getData = () => {
-        getAllProjectDetail()
-            .then((res) => {
-                console.log(res.data.projectDetails)
-                setProjectDetails(res.data.projectDetails);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        getAllProjectDetail().then((res) => {
+            setProjectDetails(res.data.projectDetails);
+        });
     };
 
     useEffect(() => {
@@ -35,15 +30,11 @@ const ManageProjectTable = () => {
 
     // function for delete the project
     const projectDelete = () => {
-        deleteProject(deleteCategoryId)
-            .then((res) => {
-                toast.success(res.data.message);
-                showDeleteModal(false);
-                getData();
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        deleteProject(deleteCategoryId).then((res) => {
+            toast.success(res.data.message);
+            showDeleteModal(false);
+            getData();
+        });
     };
 
     return (

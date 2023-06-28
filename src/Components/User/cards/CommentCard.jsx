@@ -5,7 +5,6 @@ import { deleteComment } from "../../../Services/boardApi";
 export const CommentCard = ({ comment, boarName, taskId, getData }) => {
     const { userId } = useSelector((state) => state.user);
     const commentDelete = () => {
-        console.log("this fuction called");
         deleteComment(boarName, taskId, comment._id)
             .then((res) => {
                 getData()

@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import LoginPage from "../Pages/LoginPage";
 import SignUpPage from "../Pages/SignUpPage";
 import ManageCeteogry from "../Pages/ManageCeteogry";
@@ -21,9 +21,20 @@ import DefaultLayout from "../Layout/DefaultLayout";
 import ManagePeople from "../Pages/ManagePeople";
 import { ViewTeam } from "../Pages/ViewTeam";
 import ScheduleMeeting from "../Pages/ScheduleMeeting";
-
+import { AssignToMe } from "../Pages/AssignToMe";
 
 function UserRoutes() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        const verifyToken = () => {
+            const token = localStorage.getItem("userToken");
+            if (!token) {
+                navigate("/");
+            }
+        };
+        verifyToken();
+    }, [navigate]);
+
     return (
         <Routes>
             <Route path="/" element={<LoginPage />} />
@@ -31,20 +42,42 @@ function UserRoutes() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route element={<ProtectRoutes route={"/"} />}>
                 <Route element={<DefaultLayout />}>
-                    <Route path="/manage-category" element={<ManageCeteogry />} />
-                    <Route path="/project-management" element={<ProjectManagement />} />
+                    <Route
+                        path="/manage-category"
+                        element={<ManageCeteogry />}
+                    />
+                    <Route
+                        path="/project-management"
+                        element={<ProjectManagement />}
+                    />
                     <Route path="/create-project" element={<CreateProject />} />
                     <Route path="/manage-team" element={<Team />} />
                     <Route path="/user-profile" element={<UserProfile />} />
                     <Route path="/edit-project/:id" element={<EditProject />} />
-                    <Route path="/manage-team/manage-people" element={<ManagePeople />} />
+                    <Route
+                        path="/manage-team/manage-people"
+                        element={<ManagePeople />}
+                    />
                     <Route path="/manage-team/:id" element={<ViewTeam />} />
-                    <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
+                    <Route
+                        path="/schedule-meeting"
+                        element={<ScheduleMeeting />}
+                    />
                 </Route>
                 {/* <Route path="/plan-pricing" element={<PlanPricingPage />} /> */}
                 <Route element={<ProjectManagementLayout />}>
-                    <Route path="/project-management/:name/board" element={<BoardPage />} />
-                    <Route path="/project-management/manage-access" element={<ManageAccess />} />
+                    <Route
+                        path="/project-management/:name/board"
+                        element={<BoardPage />}
+                    />
+                    <Route
+                        path="/project-management/:name/manage-access"
+                        element={<ManageAccess />}
+                    />
+                    <Route
+                        path="/project-management/:name/assinged-to-me"
+                        element={<AssignToMe />}
+                    />
                 </Route>
             </Route>
             <Route

@@ -48,7 +48,6 @@ const EditProjectForm = () => {
         e.preventDefault();
         editProject(projectDetails)
             .then((res) => {
-                console.log(res);
                 toast.success(res.data.message);
                 navigate("/project-management");
             })

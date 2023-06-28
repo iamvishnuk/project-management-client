@@ -31,7 +31,6 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
         // getting the memeber in the project for selecting the the assignee
         getAccessMembersList(_id)
             .then((res) => {
-                console.log(res.data);
                 setAcessMemberList(res.data.accessMemberList);
             })
             .catch((error) => console.log(error));

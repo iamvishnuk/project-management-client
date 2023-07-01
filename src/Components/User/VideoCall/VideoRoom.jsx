@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
-import { LocalVideoview } from "../VideoCallComponents/LocalVideoView/LocalVideoview";
 import { Actions } from "../VideoCallComponents/Actions/Actions";
 import { ScreenShareView } from "../VideoCallComponents/ScreenShare/ScreenShareView";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { useRef } from "react";
+import ReactPlayer from "react-player";
+import { useCallback } from "react";
 
 export const VideoRoom = () => {
     let { socket } = useSelector((state) => state.socket);
-    const params = useParams();
-    const [localStream, setLocalStream] = useState(null);
+    const [localStream, setLocalStream] = useState();
+    let [remoteStream, setRemoteStream] = useState(null);
     const [mute, setMute] = useState(false);
     const [video, setVideo] = useState(false);
     const [screen, setScreen] = useState(null);
-    const RTCconnection = useRef()
 
-    const defaultConfigurations = {
-        video: true,
-        audio: true,
-    };
+    const [remoteSocketId, setRemoteSocketId] = useState(null);
 
     // for muting and unmuting the audio stream
     const muteAndUnmute = () => {
@@ -45,7 +40,6 @@ export const VideoRoom = () => {
             videoTracks.forEach((track) => {
                 track.enabled = true;
             });
-            console.log(videoTracks);
         } else {
             const videoTracks = localStream.getVideoTracks();
             setVideo(true);
@@ -55,13 +49,6 @@ export const VideoRoom = () => {
         }
     };
 
-    // make webrtc connection
-    const makeWEBRTCConnection = () => {
-        RTCconnection.current = new RTCPeerConnection()
-        console.log(localStream.getTracks())
-        console.log(RTCconnection.current)
-    }
-
     // for screen share
     const startCapture = () => {
         navigator.mediaDevices
@@ -70,23 +57,58 @@ export const VideoRoom = () => {
             .catch((err) => console.log(err));
     };
 
-    useEffect(() => {
-        socket.on("new:user:joined",() => {
-            console.log("new user joined")
-        })
-    }, [socket])
+    const handleJoinedUser = useCallback(({ userId }) => {
+        console.log("another user joind", userId);
+    },[]);
 
     useEffect(() => {
-        navigator.mediaDevices
-            .getUserMedia(defaultConfigurations)
-            .then((stream) => setLocalStream(stream));
-        socket.emit("join:room", params.roomId);
-        makeWEBRTCConnection()
+        socket.on("user:joined", handleJoinedUser);
+        return () => {
+            socket.off("user:joined", handleJoinedUser);
+        }
+    }, [socket, handleUserJoined]);
+
+    useEffect(() => {
+        const init = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                });
+
+                setLocalStream(stream);
+            } catch (error) {
+                console.error("Error accessing media devices:", error);
+            }
+        };
+
+        init();
     }, []);
 
     return (
-        <div className="h-full w-full relative">
-            <LocalVideoview localStream={localStream} />
+        <div className="h-full w-full relative ">
+            <div className="absolute right-5 top-5 z-10">
+                {localStream && (
+                    <ReactPlayer
+                        playing
+                        muted
+                        width="300px"
+                        height="200px"
+                        url={localStream}
+                    />
+                )}
+            </div>
+            <div className="absolute h-full bg-black">
+                {remoteStream && (
+                    <ReactPlayer
+                        playing
+                        muted
+                        width="100%"
+                        height="100%"
+                        url={remoteStream}
+                    />
+                )}
+            </div>
             {screen && <ScreenShareView screen={screen} />}
             <Actions
                 muteAndUnmute={muteAndUnmute}

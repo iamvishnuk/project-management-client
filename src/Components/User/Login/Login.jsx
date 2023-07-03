@@ -25,7 +25,12 @@ function Login() {
             userLogin({ email: email, password: password })
                 .then((res) => {
                     localStorage.setItem("userToken", res.data.token);
-                    dispatch(changeUserDetails({ userId: res.data.userId,userName: res.data.userName }));
+                    dispatch(
+                        changeUserDetails({
+                            userId: res.data.userId,
+                            userName: res.data.userName,
+                        })
+                    );
                     toast.success(res.data.message);
                     navigate("/project-management");
                 })
@@ -41,7 +46,12 @@ function Login() {
         loginWithGoogle(userDetails)
             .then((res) => {
                 localStorage.setItem("userToken", res.data.token);
-                dispatch(changeUserDetails({ userId: res.data.userId, userName: res.data.userName }));
+                dispatch(
+                    changeUserDetails({
+                        userId: res.data.userId,
+                        userName: res.data.userName,
+                    })
+                );
                 toast.success(res.data.message);
                 navigate("/project-management");
             })
@@ -59,17 +69,37 @@ function Login() {
             <div className="flex flex-col flex-auto w-full h-screen">
                 <div className="h-full">
                     <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 h-full">
-                        <div className="hidden lg:block bg-blue-900 max-h-screen">
-                            <img
-                                className="object-cover w-screen h-screen"
-                                src="../../../../Images/login-signup.png"
-                                alt=""
-                            />
+                        <div className="hidden lg:block max-h-screen ">
+                            <div className="w-full">
+                                <div className="flex flex-col justify-center items-center pt-10">
+                                    <h1 className="bg-gradient-to-r from-blue-700 to-red-600 bg-clip-text text-transparent text-5xl font-extrabold mb-2">
+                                        ProjectFlow
+                                    </h1>
+                                    <p className="text-sm text-center text-black font-medium font-Popins">
+                                        Welcome to our Project Management Tool!
+                                        Our platform provides a comprehensive
+                                        solution for managing <br /> and
+                                        organizing your projects efficiently.
+                                        With our user-friendly interface and
+                                        powerful features, <br /> you can
+                                        streamline your project workflows,
+                                        collaborate with team members <br /> and
+                                        stay on top of deadlines.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="max-h-full">
+                                <img
+                                    className="object-contain max-h-full"
+                                    src="../../../../Images/login-signup-2.png"
+                                    alt=""
+                                />
+                            </div>
                         </div>
                         <div className="flex justify-center items-center">
                             <div className="lg:px-8 w-4/6">
-                                <h1 className="text-5xl font-extrabold font-sans my-5">
-                                    Log in
+                                <h1 className="text-5xl font-bold my-5 font-Popins">
+                                    Log In
                                 </h1>
                                 <p>
                                     Login to your account so you can start

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Actions } from "../VideoCallComponents/Actions/Actions";
 import { ScreenShareView } from "../VideoCallComponents/ScreenShare/ScreenShareView";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,6 +6,8 @@ const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
 import io from "socket.io-client";
 
 export const VideoRoom = () => {
+    const [micActive, setMicActive] = useState(true);
+    const [cameraActive, setCameraActive] = useState(true);
     const param = useParams();
     const navigate = useNavigate();
     const userVideoRef = useRef();
@@ -44,7 +46,9 @@ export const VideoRoom = () => {
         socketRef.current.on("answer", handleAnswer);
         socketRef.current.on("ice-candidate", handleNewIceCandidateMsg);
 
-        return () => socketRef.current.disconnect();
+        return () => {
+            socketRef.current.disconnect();
+        };
     }, [roomName]);
 
     const handleRoomeCreated = () => {
@@ -196,7 +200,7 @@ export const VideoRoom = () => {
     };
 
     const onPeerLeave = () => {
-        // This person is now the creator becasue the yare teh only person in the room
+        // This person is now the creator becasue they are the olny one in the room
         hostRef.current = true;
         if (peerVideoRef.current.srcObject) {
             peerVideoRef.current.srcObject
@@ -210,6 +214,24 @@ export const VideoRoom = () => {
             rtcConnectionRef.current.close();
             rtcConnectionRef.current = null;
         }
+    };
+
+    const toggleMediaStream = (type, state) => {
+        userStreamRef.current.getTracks().forEach((track) => {
+            if (track.kind === type) {
+                track.enabled = !state;
+            }
+        });
+    };
+
+    const toggleMic = () => {
+        toggleMediaStream("audio", micActive);
+        setMicActive((prev) => !prev);
+    };
+
+    const toggleCamera = () => {
+        toggleMediaStream("video", cameraActive);
+        setCameraActive((prev) => !prev);
     };
 
     return (
@@ -231,7 +253,13 @@ export const VideoRoom = () => {
                 />
             </div>
             <div>
-                <Actions leave={leaveRoom} />
+                <Actions
+                    leave={leaveRoom}
+                    toggleMic={toggleMic}
+                    toggleCamera={toggleCamera}
+                    micActive={micActive}
+                    cameraActive={cameraActive}
+                />
             </div>
         </div>
     );

@@ -22,6 +22,8 @@ import ManagePeople from "../Pages/ManagePeople";
 import { ViewTeam } from "../Pages/ViewTeam";
 import ScheduleMeeting from "../Pages/ScheduleMeeting";
 import { AssignToMe } from "../Pages/AssignToMe";
+import { CreateMeeting } from "../Pages/CreateMeeting";
+import { VideoRoom } from "../Components/User/VideoCall/VideoRoom";
 
 function UserRoutes() {
     const navigate = useNavigate();
@@ -63,6 +65,8 @@ function UserRoutes() {
                         path="/schedule-meeting"
                         element={<ScheduleMeeting />}
                     />
+                    <Route path="/create-meeting" element={<CreateMeeting />} />
+                    <Route path="/meeting/:roomId" element={<VideoRoom />} />
                 </Route>
                 {/* <Route path="/plan-pricing" element={<PlanPricingPage />} /> */}
                 <Route element={<ProjectManagementLayout />}>

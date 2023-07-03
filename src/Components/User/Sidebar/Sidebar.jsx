@@ -100,6 +100,21 @@ const Sidebar = () => {
                         </span>
                     </li>
                     <li
+                        onClick={() => navigate("/create-meeting")}
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                    >
+                        <div className="w-6 flex justify-center">
+                            <i className="fa-solid fa-video text-lg"></i>
+                        </div>
+                        <span
+                            className={`${
+                                !open && "hidden"
+                            } orign-left duration-200`}
+                        >
+                            Create Meeting
+                        </span>
+                    </li>
+                    <li
                         onClick={() => navigate("/user-profile")}
                         className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
                     >

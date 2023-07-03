@@ -98,7 +98,7 @@ export const ViewTeam = () => {
         <>
             <div className="flex h-full">
                 <div className="md:w-2/6 lg:w-1/4">
-                    <h1 className="font-bold text-xl">
+                    <h1 className="font-bold text-xl uppercase">
                         {team && team.teamName}
                     </h1>
                     <div className="flex items-center text-center p-2">

@@ -1,122 +1,238 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Actions } from "../VideoCallComponents/Actions/Actions";
 import { ScreenShareView } from "../VideoCallComponents/ScreenShare/ScreenShareView";
-import { useSelector } from "react-redux";
-import ReactPlayer from "react-player";
-import { useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+import io from "socket.io-client";
 
 export const VideoRoom = () => {
-    let { socket } = useSelector((state) => state.socket);
-    const [localStream, setLocalStream] = useState();
-    let [remoteStream, setRemoteStream] = useState(null);
-    const [mute, setMute] = useState(false);
-    const [video, setVideo] = useState(false);
-    const [screen, setScreen] = useState(null);
+    const param = useParams();
+    const navigate = useNavigate();
+    const userVideoRef = useRef();
+    const peerVideoRef = useRef();
+    const rtcConnectionRef = useRef(null);
+    const socketRef = useRef();
+    const userStreamRef = useRef();
+    const hostRef = useRef(false);
 
-    const [remoteSocketId, setRemoteSocketId] = useState(null);
+    // joined room id
+    const roomName = param.roomId;
 
-    // for muting and unmuting the audio stream
-    const muteAndUnmute = () => {
-        if (mute) {
-            const audioTracks = localStream.getAudioTracks();
-            setMute(false);
-            audioTracks.forEach((track) => {
-                track.enabled = true;
-            });
-        } else {
-            const audioTracks = localStream.getAudioTracks();
-            setMute(true);
-            audioTracks.forEach((track) => {
-                track.enabled = false;
-            });
-        }
-    };
+    useEffect(() => {
+        socketRef.current = io(baseURL);
+        // Firet we joint a room
+        socketRef.current.emit("join", roomName);
 
-    // for camera on and off
-    const videoOnOff = () => {
-        if (video) {
-            const videoTracks = localStream.getVideoTracks();
-            setVideo(false);
-            videoTracks.forEach((track) => {
-                track.enabled = true;
-            });
-        } else {
-            const videoTracks = localStream.getVideoTracks();
-            setVideo(true);
-            videoTracks.forEach((track) => {
-                track.enabled = false;
-            });
-        }
-    };
+        socketRef.current.on("created", handleRoomeCreated);
 
-    // for screen share
-    const startCapture = () => {
+        socketRef.current.on("joined", handleRoomJoined);
+        //if the room didn't exist, the server would emit the room was 'created'
+
+        // Whenever the next person joined, the server emite 'ready'
+        socketRef.current.on("ready", initiateCall);
+
+        // Emitted when a peer leaves the room
+        socketRef.current.on("leave", onPeerLeave);
+
+        // IF the room is full, we show an alert
+        socketRef.current.on("full", () => {
+            navigate("/create-meeting");
+        });
+
+        // Events that are webRTC specific
+        socketRef.current.on("offer", handleRececivedOffer);
+        socketRef.current.on("answer", handleAnswer);
+        socketRef.current.on("ice-candidate", handleNewIceCandidateMsg);
+
+        return () => socketRef.current.disconnect();
+    }, [roomName]);
+
+    const handleRoomeCreated = () => {
+        hostRef.current = true;
         navigator.mediaDevices
-            .getDisplayMedia({ video: true, audio: true })
-            .then((stream) => setScreen(stream))
-            .catch((err) => console.log(err));
+            .getUserMedia({
+                audio: true,
+                video: { width: 300, height: 200 },
+            })
+            .then((stream) => {
+                // use the stream
+                userStreamRef.current = stream;
+                userVideoRef.current.srcObject = stream;
+                userVideoRef.current.onloadmetadata = () => {
+                    userVideoRef.current.play();
+                };
+            })
+            .catch((error) => console.log(error));
     };
 
-    const handleJoinedUser = useCallback(({ userId }) => {
-        console.log("another user joind", userId);
-    },[]);
+    const handleRoomJoined = () => {
+        navigator.mediaDevices
+            .getUserMedia({ audio: true, video: { width: 300, height: 200 } })
+            .then((stream) => {
+                // use the stream
+                userStreamRef.current = stream;
+                userVideoRef.current.srcObject = stream;
+                userVideoRef.current.onloadmetadata = () => {
+                    userVideoRef.current.play();
+                };
+                socketRef.current.emit("ready", roomName);
+            })
+            .catch((error) => console.log(error));
+    };
 
-    useEffect(() => {
-        socket.on("user:joined", handleJoinedUser);
-        return () => {
-            socket.off("user:joined", handleJoinedUser);
+    const initiateCall = () => {
+        if (hostRef.current) {
+            rtcConnectionRef.current = createPeerConnection();
+            rtcConnectionRef.current.addTrack(
+                userStreamRef.current.getTracks()[0],
+                userStreamRef.current
+            );
+            rtcConnectionRef.current.addTrack(
+                userStreamRef.current.getTracks()[1],
+                userStreamRef.current
+            );
+            rtcConnectionRef.current
+                .createOffer()
+                .then((offer) => {
+                    rtcConnectionRef.current.setLocalDescription(offer);
+                    socketRef.current.emit("offer", offer, roomName);
+                })
+                .catch((error) => console.log(error));
         }
-    }, [socket, handleUserJoined]);
+    };
 
-    useEffect(() => {
-        const init = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true,
-                });
+    const ICE_SERVERS = {
+        iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:global.stun.twilio.com:3478",
+                ],
+            },
+        ],
+    };
 
-                setLocalStream(stream);
-            } catch (error) {
-                console.error("Error accessing media devices:", error);
-            }
-        };
+    const createPeerConnection = () => {
+        // we create a RTC Peer Connection
+        const connection = new RTCPeerConnection(ICE_SERVERS);
 
-        init();
-    }, []);
+        // we implement our onicecandiate method for when we reaceved a ICE candidate from the STUN server
+        connection.onicecandidate = handleICECandidateEvent;
+
+        // We implement our onTrack method for when we receive tracks
+        connection.ontrack = handleTrackEvent;
+        return connection;
+    };
+
+    const handleRececivedOffer = (offer) => {
+        if (!hostRef.current) {
+            rtcConnectionRef.current = createPeerConnection();
+            rtcConnectionRef.current.addTrack(
+                userStreamRef.current.getTracks()[0],
+                userStreamRef.current
+            );
+            rtcConnectionRef.current.addTrack(
+                userStreamRef.current.getTracks()[1],
+                userStreamRef.current
+            );
+            rtcConnectionRef.current.setRemoteDescription(offer);
+
+            rtcConnectionRef.current
+                .createAnswer()
+                .then((answer) => {
+                    rtcConnectionRef.current.setLocalDescription(answer);
+                    socketRef.current.emit("answer", answer, roomName);
+                })
+                .catch((error) => console.log(error));
+        }
+    };
+
+    const handleAnswer = (answer) => {
+        rtcConnectionRef.current
+            .setRemoteDescription(answer)
+            .catch((error) => console.log(error));
+    };
+
+    const handleICECandidateEvent = (event) => {
+        if (event.candidate) {
+            socketRef.current.emit("ice-candidate", event.candidate, roomName);
+        }
+    };
+
+    const handleNewIceCandidateMsg = (incomming) => {
+        // we cast the incomming canidate to RTCIceCandidate
+        const candidate = new RTCIceCandidate(incomming);
+        rtcConnectionRef.current
+            .addIceCandidate(candidate)
+            .catch((error) => console.log(error));
+    };
+
+    const handleTrackEvent = (event) => {
+        console.log("handleTrackEvent", event.streams);
+        peerVideoRef.current.srcObject = event.streams[0];
+    };
+
+    const leaveRoom = () => {
+        socketRef.current.emit("leave", roomName); // Let's the server know that user has left the room
+        if (userVideoRef.current.srcObject) {
+            userVideoRef.current.srcObject
+                .getTracks()
+                .forEach((track) => track.stop()); // stop receiving all track of user);
+        }
+        if (peerVideoRef.current.srcObject) {
+            peerVideoRef.current.srcObject
+                .getTracks()
+                .forEach((track) => track.stop());
+        }
+
+        // Checks if there is peer on the other side and safely closes the existing connection established with the peer
+        if (rtcConnectionRef.current) {
+            rtcConnectionRef.current.ontrack = null;
+            rtcConnectionRef.current.onicecandidate = null;
+            rtcConnectionRef.current.close();
+            rtcConnectionRef.current = null;
+        }
+        navigate("/create-meeting");
+    };
+
+    const onPeerLeave = () => {
+        // This person is now the creator becasue the yare teh only person in the room
+        hostRef.current = true;
+        if (peerVideoRef.current.srcObject) {
+            peerVideoRef.current.srcObject
+                .getTracks()
+                .forEach((track) => track.stop()); // stop receiving all track of peer
+        }
+        // Safely closes the existing connection establshed with the peer who left
+        if (rtcConnectionRef.current) {
+            rtcConnectionRef.current.ontrack = null;
+            rtcConnectionRef.current.onicecandidate = null;
+            rtcConnectionRef.current.close();
+            rtcConnectionRef.current = null;
+        }
+    };
 
     return (
-        <div className="h-full w-full relative ">
+        <div className="h-full w-full relative">
             <div className="absolute right-5 top-5 z-10">
-                {localStream && (
-                    <ReactPlayer
-                        playing
-                        muted
-                        width="300px"
-                        height="200px"
-                        url={localStream}
-                    />
-                )}
+                <video
+                    className="rounded-md border-2 border-white shadow-lg"
+                    autoPlay
+                    ref={userVideoRef}
+                    muted
+                />
             </div>
-            <div className="absolute h-full bg-black">
-                {remoteStream && (
-                    <ReactPlayer
-                        playing
-                        muted
-                        width="100%"
-                        height="100%"
-                        url={remoteStream}
-                    />
-                )}
+            <div className="h-full">
+                <video
+                    className="h-full w-full"
+                    autoPlay
+                    ref={peerVideoRef}
+                    width={2000}
+                />
             </div>
-            {screen && <ScreenShareView screen={screen} />}
-            <Actions
-                muteAndUnmute={muteAndUnmute}
-                mute={mute}
-                videoOnOff={videoOnOff}
-                video={video}
-                startCapture={startCapture}
-            />
+            <div>
+                <Actions leave={leaveRoom} />
+            </div>
         </div>
     );
 };

@@ -3,11 +3,11 @@ import { BsFillMicMuteFill, BsFillMicFill } from "react-icons/bs";
 import { FaVideoSlash, FaVideo } from "react-icons/fa";
 import { MdCallEnd, MdOutlineScreenShare } from "react-icons/md";
 
-export const Actions = ({ muteAndUnmute, mute, videoOnOff, video, startCapture }) => {
+export const Actions = ({ muteAndUnmute, mute, videoOnOff, video, startCapture, leave }) => {
     return (
-        <div className="absolute w-full bottom-0 ">
+        <div className="absolute w-full bottom-4 ">
             <div className="flex gap-3 justify-center">
-                <div className="p-4 rounded-full bg-red-700">
+                <div className="p-4 rounded-full bg-red-700" onClick={leave}>
                     <MdCallEnd color="white" size={20} />
                 </div>
                 <div

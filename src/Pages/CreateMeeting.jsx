@@ -1,34 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { RiVideoAddFill } from "react-icons/ri";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
 export const CreateMeeting = () => {
     const navigate = useNavigate();
     const [roomId, setRoomId] = useState("");
-    let { socket } = useSelector((state) => state.socket);
 
-    const handleClick = useCallback(() => {
-        socket.emit("join-video-room",roomId);
-    }, [roomId]);
-    
-    const newMeeting = () => {
-        const newRoomId = uuidv4()
-        socket.emit("join-video-room",newRoomId);
-        
+    const joinMeeting = () => {
+        if (roomId.trim() === "" || roomId.startsWith(" ")) {
+            toast.error("Enter a valid roomId");
+        } else {
+            navigate(`/meeting/${roomId}`);
+        }
     };
 
-    const handleJoinRoom = useCallback((roomId) => {
-        navigate(`/meeting/${roomId}`)
-    },[])
-    
-    useEffect(() => {
-        socket.on("video-room", handleJoinRoom);
-        return () => {
-            socket.off("video-room", handleJoinRoom);
-        };
-    }, [socket]);
+    const newMeeting = () => {
+        const newRoomId = uuidv4();
+        navigate(`/meeting/${newRoomId}`);
+    };
 
     return (
         <>
@@ -58,7 +49,7 @@ export const CreateMeeting = () => {
                         {roomId !== "" && (
                             <button
                                 className="flex items-center gap-2 font-medium bg-blue-600 text-white h-10 px-3 rounded-md hover:bg-blue-700"
-                                onClick={handleClick}
+                                onClick={joinMeeting}
                             >
                                 join
                             </button>

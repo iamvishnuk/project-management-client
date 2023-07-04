@@ -67,6 +67,7 @@ function UserRoutes() {
                     />
                     <Route path="/create-meeting" element={<CreateMeeting />} />
                     <Route path="/meeting/:roomId" element={<VideoRoom />} />
+                    <Route path="/assinged-to-me" element={<AssignToMe />} />
                 </Route>
                 {/* <Route path="/plan-pricing" element={<PlanPricingPage />} /> */}
                 <Route element={<ProjectManagementLayout />}>
@@ -77,10 +78,6 @@ function UserRoutes() {
                     <Route
                         path="/project-management/:name/manage-access"
                         element={<ManageAccess />}
-                    />
-                    <Route
-                        path="/project-management/:name/assinged-to-me"
-                        element={<AssignToMe />}
                     />
                 </Route>
             </Route>

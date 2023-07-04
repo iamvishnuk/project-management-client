@@ -34,7 +34,7 @@ const Sidebar = () => {
                             !open && "scale-0"
                         }`}
                     >
-                        Project Management
+                        ProjectFlow
                     </h1>
                 </div>
                 <hr className="mt-5" />
@@ -67,6 +67,21 @@ const Sidebar = () => {
                             } orign-left duration-200`}
                         >
                             Category Management
+                        </span>
+                    </li>
+                    <li
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                        onClick={() => navigate(`/assinged-to-me`)}
+                    >
+                        <div className="w-6 flext justify-center">
+                            <i className="fa-solid fa-user-pen text-xl"></i>
+                        </div>
+                        <span
+                            className={`${
+                                !open && "hidden"
+                            } orign-left duration-200`}
+                        >
+                            Assigned To Me
                         </span>
                     </li>
                     <li

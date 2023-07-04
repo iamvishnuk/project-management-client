@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Actions } from "../VideoCallComponents/Actions/Actions";
-import { ScreenShareView } from "../VideoCallComponents/ScreenShare/ScreenShareView";
 import { useNavigate, useParams } from "react-router-dom";
 const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
 import io from "socket.io-client";

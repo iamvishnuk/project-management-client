@@ -151,8 +151,8 @@ const removeAcess = (memberId, projectId) => {
     return userAxiosInstance.get(`/remove-access/${memberId}/${projectId}`, { withCredentials: true })
 }
 
-const getAssignedTask = (projectId) => {
-    return userAxiosInstance.get(`/get-assigned-task/${projectId}`, { withCredentials: true })
+const getAssignedTask = () => {
+    return userAxiosInstance.get("/assinged-task", { withCredentials: true })
 }
 
 // ------------------------ API RELATED TO SCHEDULE MEETINGS -----------------------    

@@ -9,7 +9,7 @@ export const AssignToMe = () => {
     const { _id } = useSelector((state) => state.project.value);
     // getting the assigned task
     useEffect(() => {
-        getAssignedTask(_id).then((res) => {
+        getAssignedTask().then((res) => {
             setAssignedTask(res.data.assignedTask);
         });
     }, []);

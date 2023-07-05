@@ -1,4 +1,3 @@
-import Sidebar from "../Components/User/Sidebar/Sidebar";
 import CreateProjectForm from "../Components/User/forms/CreateProjectForm";
 
 const CreateProject = () => {

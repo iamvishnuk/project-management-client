@@ -44,3 +44,5 @@ export const taskTypeOpions = [
         icon: <FaBug color="red" size={20} /> 
     },
 ];
+
+export const NotificaitonIcon = "public/Images/idea.png";

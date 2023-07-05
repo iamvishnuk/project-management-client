@@ -46,7 +46,7 @@ const editUserDetails = (values) => {
 }
 
 const uploadImage = (value) => {
-    return userAxiosInstance.post("/image-upload", value, { headers: { "content-type": "multipart/form-data", },withCredentials:true})
+    return userAxiosInstance.post("/image-upload", value, { headers: { "content-type": "multipart/form-data", }, withCredentials: true })
 }
 
 // ----------------- end of api related to user -------------------------------
@@ -167,15 +167,19 @@ const getEvent = (userId) => {
 
 // --------------------- API RELATED TO CHAT IN TEAM --------------------------
 const addMessage = (values) => {
-    return userAxiosInstance.post("/add-chat",values, { withCredentials: true})
+    return userAxiosInstance.post("/add-chat", values, { withCredentials: true })
 }
 
 const getAllMessage = (teamId) => {
-    return userAxiosInstance.get(`/get-all-message/${teamId}`, { withCredentials: true})
+    return userAxiosInstance.get(`/get-all-message/${teamId}`, { withCredentials: true })
 }
 
-const sendImageMessage = (file,teamId) => {
+const sendImageMessage = (file, teamId) => {
     return userAxiosInstance.post(`/image-message/${teamId}`, file, { headers: { "content-type": "multipart/form-data", }, withCredentials: true })
+}
+
+const getAllNotification = () => {
+    return userAxiosInstance.get("/get-all-notification", { withCredentials: true })
 }
 
 export {
@@ -220,4 +224,5 @@ export {
     addMessage,
     getAllMessage,
     sendImageMessage,
+    getAllNotification
 }

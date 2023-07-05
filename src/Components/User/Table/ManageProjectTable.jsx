@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { getAllProjectDetail, deleteProject } from "../../../Services/userApi";
+import { deleteProject } from "../../../Services/userApi";
 import { useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
@@ -9,24 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeProjectDetails } from "../../../Redux/ProjectSlice";
 
-const ManageProjectTable = () => {
-    const [projectDetails, setProjectDetails] = useState([]);
+const ManageProjectTable = ({ projectDetails, getData, search }) => {
     const [deleteModal, showDeleteModal] = useState(false);
     const [deleteCategoryId, setDeleteCategoryId] = useState("");
+    const [page, setpage] = useState(1);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userId } = useSelector((state) => state.user);
-
-    // for getting the all project data
-    const getData = () => {
-        getAllProjectDetail().then((res) => {
-            setProjectDetails(res.data.projectDetails);
-        });
-    };
-
-    useEffect(() => {
-        getData();
-    }, []);
 
     // function for delete the project
     const projectDelete = () => {
@@ -35,6 +23,11 @@ const ManageProjectTable = () => {
             showDeleteModal(false);
             getData();
         });
+    };
+
+    // for handling the pagenation
+    const selectPageHandler = (selectPage) => {
+            setpage(selectPage);
     };
 
     return (
@@ -61,73 +54,176 @@ const ManageProjectTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {projectDetails.map((project, index) => {
-                            return (
-                                <tr
-                                    key={index}
-                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                                >
-                                    <td className="px-6 py-4">{index + 1}</td>
-                                    <th
-                                        scope="row"
-                                        className="px-6 py-4 font-medium text-blue-700 whitespace-nowrap dark:text-white hover:underline hover:cursor-pointer"
-                                        onClick={() => {
-                                            dispatch(
-                                                changeProjectDetails(project)
-                                            );
-                                            navigate(
-                                                `/project-management/${project.projectName}/board`
-                                            );
-                                        }}
-                                    >
-                                        {project.projectName}
-                                    </th>
-                                    <td className="px-6 py-4">
-                                        {project.projectCategory.categoryName}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {project.projectLead.userName}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {project.members.includes(userId) ? (
-                                            <span>Disabled</span>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    className="mr-1"
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/edit-project/${project._id}`
+                        {projectDetails &&
+                            projectDetails
+                                .filter((data) =>
+                                    data.projectName
+                                        .toLowerCase()
+                                        .includes(search)
+                                )
+                                .slice(page * 5 - 5, page * 5)
+                                .map((project, index) => {
+                                    return (
+                                        <tr
+                                            key={index}
+                                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                                        >
+                                            <td className="px-6 py-4">
+                                                {index + 1}
+                                            </td>
+                                            <th
+                                                scope="row"
+                                                className="px-6 py-4 font-medium text-blue-700 whitespace-nowrap dark:text-white hover:underline hover:cursor-pointer"
+                                                onClick={() => {
+                                                    dispatch(
+                                                        changeProjectDetails(
+                                                            project
                                                         )
-                                                    }
-                                                >
-                                                    <BiEdit
-                                                        size={22}
-                                                        color="blue"
-                                                    />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        showDeleteModal(true);
-                                                        setDeleteCategoryId(
-                                                            project._id
-                                                        );
-                                                    }}
-                                                    className="mr-1"
-                                                >
-                                                    <AiFillDelete
-                                                        size={22}
-                                                        color="red"
-                                                    />
-                                                </button>
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                                                    );
+                                                    navigate(
+                                                        `/project-management/${project.projectName}/board`
+                                                    );
+                                                }}
+                                            >
+                                                {project.projectName}
+                                            </th>
+                                            <td className="px-6 py-4">
+                                                {
+                                                    project.projectCategory
+                                                        .categoryName
+                                                }
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {project.projectLead.userName}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {project.members.includes(
+                                                    userId
+                                                ) ? (
+                                                    <span>Disabled</span>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            className="mr-1"
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/edit-project/${project._id}`
+                                                                )
+                                                            }
+                                                        >
+                                                            <BiEdit
+                                                                size={22}
+                                                                color="blue"
+                                                            />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                showDeleteModal(
+                                                                    true
+                                                                );
+                                                                setDeleteCategoryId(
+                                                                    project._id
+                                                                );
+                                                            }}
+                                                            className="mr-1"
+                                                        >
+                                                            <AiFillDelete
+                                                                size={22}
+                                                                color="red"
+                                                            />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                     </tbody>
                 </table>
+                <div className="flex justify-end">
+                    {projectDetails.length > 0 && (
+                        <nav aria-label="Page navigation example">
+                            <ul className="flex items-center -space-x-px h-8 text-sm">
+                                {page !== 1 && (
+                                    <li
+                                        onClick={() =>
+                                            selectPageHandler(page - 1)
+                                        }
+                                    >
+                                        <a
+                                            href="#"
+                                            className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 "
+                                        >
+                                            <span className="sr-only">
+                                                Previous
+                                            </span>
+                                            <svg
+                                                className="w-2.5 h-2.5"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 6 10"
+                                            >
+                                                <path
+                                                    stroke="currentColor"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M5 1 1 5l4 4"
+                                                />
+                                            </svg>
+                                        </a>
+                                    </li>
+                                )}
+
+                                {[
+                                    ...Array(
+                                        Math.ceil(projectDetails.length / 5)
+                                    ),
+                                ].map((_, index) => {
+                                    return (
+                                        <li
+                                            key={index}
+                                            onClick={() =>
+                                                selectPageHandler(index + 1)
+                                            }
+                                        >
+                                            <a
+                                                href="#"
+                                                className={page == index + 1 ? "flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 bg-gray-300" : "flex items-center justify-center px-3 h-8 leading-tight border border-gray-300"}
+                                            >
+                                                {index + 1}
+                                            </a>
+                                        </li>
+                                    );
+                                })}
+                                <li onClick={() => selectPageHandler(page + 1)}>
+                                    <a
+                                        href="#"
+                                        className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
+                                    >
+                                        <span className="sr-only">Next</span>
+                                        <svg
+                                            className="w-2.5 h-2.5"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 6 10"
+                                        >
+                                            <path
+                                                stroke="currentColor"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="m1 9 4-4-4-4"
+                                            />
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    )}
+                </div>
             </div>
             <Modal
                 isVisible={deleteModal}

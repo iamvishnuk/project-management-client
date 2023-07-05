@@ -1,18 +1,41 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { NotificationModal } from "../Modal/NotificationModal";
+import { useEffect } from "react";
+import { getAllNotification } from "../../../Services/userApi";
+import useSocketConnection from "../../../hooks/Socket";
 
 const Sidebar = () => {
+    const socket = useSocketConnection();
     const [open, setOpen] = useState(true);
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationCount, setNotificationCount] = useState("");
     const navigate = useNavigate();
     const logout = () => {
         localStorage.removeItem("userToken");
         navigate("/");
     };
+    useEffect(() => {
+        if (socket) {
+            socket.on("notification", () => {
+                getAllNotification().then((res) =>
+                    setNotificationCount(res.data.notifications.length)
+                );
+            });
+        }
+    }, [socket]);
+
+    useEffect(() => {
+        getAllNotification().then((res) =>
+            setNotificationCount(res.data.notifications.length)
+        );
+    }, [showNotification]);
+
     return (
         <>
             <div
                 className={`${
-                    open ? "72" : "w-20"
+                    open ? "w-72" : "w-20"
                 } p-5 pt-8 duration-300 h-screen bg-gray-100 relative border-r-2`}
             >
                 <img
@@ -82,6 +105,24 @@ const Sidebar = () => {
                             } orign-left duration-200`}
                         >
                             Assigned To Me
+                        </span>
+                    </li>
+                    <li
+                        className="mt-2  text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-blue-700 hover:text-white rounded-md"
+                        onClick={() => setShowNotification(true)}
+                    >
+                        <div className="w-6 flext justify-center">
+                            <i className="fa-sharp fa-solid fa-bell text-xl"></i>
+                        </div>
+                        <span
+                            className={`${
+                                !open && "hidden"
+                            } orign-left duration-200`}
+                        >
+                            Notification
+                            <span className="bg-blue-700 text-white text-xs font-medium mr-2 px-1.5 py-0.5 rounded-full ml-2">
+                                {notificationCount}
+                            </span>
                         </span>
                     </li>
                     <li
@@ -161,6 +202,10 @@ const Sidebar = () => {
                     </li>
                 </ul>
             </div>
+            <NotificationModal
+                isVisible={showNotification}
+                onClose={() => setShowNotification(false)}
+            />
         </>
     );
 };

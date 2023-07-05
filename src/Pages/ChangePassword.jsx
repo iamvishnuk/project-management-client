@@ -84,7 +84,7 @@ const ChangePassword = () => {
                                             )}
                                             <input
                                                 className="w-full border rounded-md bg-transparent border-gray-400 p-3 my-2"
-                                                type="text"
+                                                type="password"
                                                 placeholder="Enter your email"
                                                 name="newPassword"
                                                 value={values.newPassword}
@@ -105,7 +105,7 @@ const ChangePassword = () => {
                                             )}
                                             <input
                                                 className="w-full border rounded-md bg-transparent border-gray-400 p-3 my-2"
-                                                type="text"
+                                                type="password"
                                                 placeholder="Enter your email"
                                                 name="confirmPassword"
                                                 value={values.confirmPassword}

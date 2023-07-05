@@ -5,8 +5,10 @@ import {
 } from "../../../Services/userApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import useSocketConnection from "../../../hooks/Socket";
 
 const CreateProjectFrom = () => {
+    const soket = useSocketConnection()
     const [category, setCategory] = useState([]);
     const [members, setMembers] = useState([]);
     const navigate = useNavigate()
@@ -38,6 +40,9 @@ const CreateProjectFrom = () => {
             .then((res) => {
                 toast.success(res.data.message)
                 navigate("/project-management");
+                if(soket) {
+                    soket.emit("create:project",res.data.projectLead)
+                }
             })
             .catch((error) => {
                 toast.error(error.response.data.message)

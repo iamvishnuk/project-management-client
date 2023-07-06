@@ -40,9 +40,7 @@ const ManageAccess = () => {
             .then((res) => {
                 setAcessMemberList(res.data.accessMemberList);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     };
 
     useEffect(() => {
@@ -50,9 +48,7 @@ const ManageAccess = () => {
             .then((res) => {
                 setMembers(res.data.data);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
         getAccessMember();
     }, []);
 
@@ -65,7 +61,6 @@ const ManageAccess = () => {
                 getAccessMember();
             })
             .catch((error) => {
-                console.log(error);
                 showModal(false);
             });
     };

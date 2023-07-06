@@ -60,9 +60,8 @@ function Login() {
             });
     };
 
-    const errorMessage = (error) => {
-        console.log(error);
-    };
+    // google error
+    const errorMessage = (error) => {};
 
     return (
         <>

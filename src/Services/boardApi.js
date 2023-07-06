@@ -9,7 +9,7 @@ const getBoardData = (projectId) => {
 }
 
 const deleteBoard = (boardId) => {
-    return userAxiosInstance.get(`/delete-board/${boardId}`, { withCredentials: true })
+    return userAxiosInstance.delete(`/delete-board/${boardId}`, { withCredentials: true })
 }
 
 const createNewTask = (boardId, projectId, values) => {

@@ -21,17 +21,13 @@ const EditProjectForm = () => {
             .then((res) => {
                 setProjectDetails(res.data.projectData);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
         getMembersAndCategory()
             .then((res) => {
                 setCategory(res.data.categoryDetails);
                 setMembers(res.data.memberDetails);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     }, []);
 
     // for handling the changes in the input
@@ -51,9 +47,7 @@ const EditProjectForm = () => {
                 toast.success(res.data.message);
                 navigate("/project-management");
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     };
 
     return (
@@ -75,7 +69,8 @@ const EditProjectForm = () => {
                             value={
                                 projectDetails == null
                                     ? ""
-                                    : projectDetails && projectDetails.projectName
+                                    : projectDetails &&
+                                      projectDetails.projectName
                             }
                             onChange={handleInput}
                         />

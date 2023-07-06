@@ -41,7 +41,7 @@ const ManageCeteogry = () => {
             .then((response) => {
                 setCategoryData(response.data.data);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {});
     };
 
     useEffect(() => {

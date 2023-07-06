@@ -1,13 +1,25 @@
 import React, { useEffect } from "react";
 import Sidebar from "../Components/User/Sidebar/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useSocketConnection from "../hooks/Socket";
 import { NotificaitonIcon } from "../constant/constant";
 
+
 const DefaultLayout = () => {
     const socket = useSocketConnection();
     const { userId } = useSelector((state) => state.user);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const verifyToken = () => {
+            const token = localStorage.getItem("userToken");
+            if (!token) {
+                navigate("/");
+            }
+        };
+        verifyToken();
+    }, [navigate]);
 
     // FOR DISPLAYING THE BROWSER NOTIFICATON
     useEffect(() => {
@@ -32,7 +44,7 @@ const DefaultLayout = () => {
     useEffect(() => {
         Notification.requestPermission()
             .then(() => {})
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     }, []);
 
     return (

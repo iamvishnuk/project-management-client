@@ -22,7 +22,6 @@ const Board = ({ data, index, getData }) => {
                 showDeleteConfirmModal(false);
                 getData();
             })
-            .catch((error) => console.log(error));
     };
 
     return (

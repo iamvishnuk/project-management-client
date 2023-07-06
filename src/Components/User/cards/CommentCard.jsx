@@ -9,7 +9,6 @@ export const CommentCard = ({ comment, boarName, taskId, getData }) => {
             .then((res) => {
                 getData()
             })
-            .catch((error) => console.log(error));
     };
     return (
         <>

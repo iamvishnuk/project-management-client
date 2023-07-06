@@ -37,9 +37,7 @@ export const ViewTeam = () => {
             .then((res) => {
                 setTeam(res.data.team);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     };
 
     useEffect(() => {
@@ -48,9 +46,7 @@ export const ViewTeam = () => {
             .then((res) => {
                 setMembers(res.data.data);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     }, []);
 
     // for removing members from the team
@@ -60,7 +56,7 @@ export const ViewTeam = () => {
                 toast.success(res.data.message);
                 getData();
             })
-            .catch((error) => console.log(error.message));
+            .catch((error) => {});
     };
 
     // for leaving from the team for members in the team
@@ -70,7 +66,7 @@ export const ViewTeam = () => {
                 toast.success("You exited the team");
                 navigate("/manage-team");
             })
-            .catch((error) => console.log(error.message));
+            .catch((error) => {});
     };
 
     //for adding memeber to team for team admin
@@ -81,7 +77,7 @@ export const ViewTeam = () => {
                 toast.success(res.data.message);
                 getData();
             })
-            .catch((error) => console.log(error.message));
+            .catch((error) => {});
     };
 
     // for deleting the team
@@ -91,7 +87,7 @@ export const ViewTeam = () => {
                 toast.success(res.data.message);
                 navigate("/manage-team");
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     return (

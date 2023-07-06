@@ -10,7 +10,6 @@ const ProtectRoutes = ({ route }) => {
         const isUserAuth = async () => {
             isAuthUser()
                 .then((res) => {
-                    console.log('protected',res)
                     setAuth(res.data.auth);
                 })
                 .catch((err) => {

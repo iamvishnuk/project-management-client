@@ -52,16 +52,12 @@ export default function ScheduleMeeting() {
             .then((res) => {
                 setEvent(res.data.eventData);
             })
-            .catch((error) => {
-                console.log(error.message);
-            });
+            .catch((error) => {});
     };
 
     useEffect(() => {
         fecthData();
     }, []);
-
-
 
     return (
         <>

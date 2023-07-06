@@ -17,7 +17,7 @@ const initialValues = {
 
 function SignUpForm() {
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
         useFormik({
             initialValues: initialValues,
@@ -38,26 +38,27 @@ function SignUpForm() {
                     toast.success("Verification link send to email");
                 }
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     };
 
     // google sigin functions
     const responseMessage = async (response) => {
         const userDetails = jwtDecode(response.credential);
-        signupWithGoogle(userDetails).then(res => {
-            localStorage.setItem("userToken",res.data.token)
-            dispatch(changeUserDetails({ userId: res.data.userId, userName: res.data.userName }));
-            toast.success(res.data.message)
-            navigate("/project-management");
-        }).catch(error => {
-            console.log(error)
-        })
+        signupWithGoogle(userDetails)
+            .then((res) => {
+                localStorage.setItem("userToken", res.data.token);
+                dispatch(
+                    changeUserDetails({
+                        userId: res.data.userId,
+                        userName: res.data.userName,
+                    })
+                );
+                toast.success(res.data.message);
+                navigate("/project-management");
+            })
+            .catch((error) => {});
     };
-    const errorMessage = (error) => {
-        console.log(error);
-    };
+    const errorMessage = (error) => {};
 
     return (
         <>

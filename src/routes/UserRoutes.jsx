@@ -26,16 +26,7 @@ import { CreateMeeting } from "../Pages/CreateMeeting";
 import { VideoRoom } from "../Components/User/VideoCall/VideoRoom";
 
 function UserRoutes() {
-    const navigate = useNavigate();
-    useEffect(() => {
-        const verifyToken = () => {
-            const token = localStorage.getItem("userToken");
-            if (!token) {
-                navigate("/");
-            }
-        };
-        verifyToken();
-    }, [navigate]);
+    const navigate = useNavigate();  
 
     return (
         <Routes>

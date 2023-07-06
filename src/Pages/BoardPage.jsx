@@ -15,7 +15,7 @@ const BoardPage = () => {
             .then((res) => {
                 setBoardData(res.data.boardData);
             })
-            .catch((error) => console.log(error.message));
+            .catch((error) => {});
     };
 
     useEffect(() => {
@@ -33,7 +33,7 @@ const BoardPage = () => {
             .then((res) => {
                 getData();
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     return (

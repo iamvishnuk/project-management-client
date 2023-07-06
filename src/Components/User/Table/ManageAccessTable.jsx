@@ -7,7 +7,9 @@ import { toast } from "react-toastify";
 const ManageAccessTable = ({ accessMemberList, getData }) => {
     const [memberId, setmemberId] = useState("");
     const [modal, showModal] = useState(false);
-    const { _id, createdBy, projectLead } = useSelector((state) => state.project.value);
+    const { _id, createdBy, projectLead } = useSelector(
+        (state) => state.project.value
+    );
     const { userId } = useSelector((state) => state.user);
     const remove = () => {
         removeAcess(memberId, _id)
@@ -16,9 +18,7 @@ const ManageAccessTable = ({ accessMemberList, getData }) => {
                 showModal(false);
                 getData();
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     };
 
     return (

@@ -28,9 +28,6 @@ const CreateProjectFrom = () => {
                 setCategory(res.data.categoryDetails);
                 setMembers(res.data.memberDetails);
             })
-            .catch((error) => {
-                console.log(error);
-            });
     };
 
     //for creating new project

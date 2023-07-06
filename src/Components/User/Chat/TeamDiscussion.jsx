@@ -29,7 +29,6 @@ export const TeamDiscussion = () => {
             .then((res) => {
                 socket.current.emit("send-message", res.data.data);
             })
-            .catch((err) => console.log("addMessage", err.message));
         setValue("");
     };
 
@@ -39,7 +38,6 @@ export const TeamDiscussion = () => {
             .then((res) => {
                 setMessage(res.data.message);
             })
-            .catch((err) => console.log("getMsg", err.message));
     };
 
     // sending image in chat
@@ -52,7 +50,6 @@ export const TeamDiscussion = () => {
             .then((res) => {
                 socket.current.emit("send-message", res.data.data);
             })
-            .catch((err) => console.log(err));
     };
 
     // listening of the -- recieved-msg -- event and update the state

@@ -171,7 +171,6 @@ export const VideoRoom = () => {
     };
 
     const handleTrackEvent = (event) => {
-        console.log("handleTrackEvent", event.streams);
         peerVideoRef.current.srcObject = event.streams[0];
     };
 

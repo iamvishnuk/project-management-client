@@ -23,7 +23,7 @@ const UserProfile = () => {
             .then((res) => {
                 setUserDetails(res.data.userDetails);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     // for editing the user details
@@ -36,7 +36,7 @@ const UserProfile = () => {
             .then((res) => {
                 getData();
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     // for handling the image change
@@ -53,7 +53,7 @@ const UserProfile = () => {
                 getData()
                 setUploading(false)
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     useEffect(() => {

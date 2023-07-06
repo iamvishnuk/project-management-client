@@ -33,7 +33,7 @@ const CreateTaskModal = ({ boardId, onClose, getData }) => {
             .then((res) => {
                 setAcessMemberList(res.data.accessMemberList);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     }, []);
 
     // changing the acccess member list for select

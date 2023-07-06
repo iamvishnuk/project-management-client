@@ -19,16 +19,14 @@ const ManageTeam = () => {
             .then((res) => {
                 setPeople(res.data.peopleData);
             })
-            .catch((errror) => {
-                console.log(errror.message);
-            });
+            .catch((errror) => {});
     };
     const getTeam = () => {
         getAllTeam()
             .then((res) => {
                 setTeam(res.data.teamData);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
     useEffect(() => {
         getPeople();
@@ -56,7 +54,9 @@ const ManageTeam = () => {
                 <div className="flex justify-between">
                     <h1 className="text-xl font-semibold">People</h1>
                     <h1 className="text-blue-500 hover:underline">
-                        <Link to={"/manage-team/manage-people"}>Manage people</Link>
+                        <Link to={"/manage-team/manage-people"}>
+                            Manage people
+                        </Link>
                     </h1>
                 </div>
                 <div className="grid grid-cols-6 gap-5 px-2 py-3">

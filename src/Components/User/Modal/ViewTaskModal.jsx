@@ -74,7 +74,6 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                 setEditPriority(false);
             })
             .catch((error) => {
-                console.log(error);
             });
     };
 
@@ -84,12 +83,12 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
             .then((res) => {
                 setAcessMemberList(res.data.accessMemberList);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
         getBoardNames()
             .then((res) => {
                 setBoardNames(res.data.boardNames);
             })
-            .catch((error) => console.log(error.message));
+            .catch((error) => {});
     }, []);
 
     //for changing the board
@@ -104,7 +103,7 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                 getData();
                 setChangeStatus(false);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     // for adding commetn
@@ -118,7 +117,7 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
             .then((res) => {
                 getData();
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     // for deleting the task
@@ -128,7 +127,7 @@ export const ViewTaskModal = ({ item, boardName, getData }) => {
                 setDeleteModal(false);
                 getData();
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     const changeTimeSpend = () => {

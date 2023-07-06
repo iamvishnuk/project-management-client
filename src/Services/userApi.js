@@ -65,7 +65,7 @@ const editCategory = (value) => {
     return userAxiosInstance.post("/edit-category", value, { withCredentials: true })
 }
 const deleteCategory = (id) => {
-    return userAxiosInstance.get(`/delete-category/${id}`, { withCredentials: true })
+    return userAxiosInstance.delete(`/delete-category/${id}`, { withCredentials: true })
 }
 // ------------------ end of api related to project category -------------------------
 
@@ -104,7 +104,7 @@ const addTeamMember = (teamId, member) => {
 }
 
 const deleteTeam = (teamId) => {
-    return userAxiosInstance.get(`/delete-team/${teamId}`, { withCredentials: true })
+    return userAxiosInstance.delete(`/delete-team/${teamId}`, { withCredentials: true })
 }
 
 // ------------------- end of api related to team management --------------------
@@ -124,7 +124,7 @@ const getAllProjectDetail = () => {
 }
 
 const deleteProject = (id) => {
-    return userAxiosInstance.get(`/delete-project/${id}`, { withCredentials: true })
+    return userAxiosInstance.delete(`/delete-project/${id}`, { withCredentials: true })
 }
 
 const getEditProjectDetails = (id) => {

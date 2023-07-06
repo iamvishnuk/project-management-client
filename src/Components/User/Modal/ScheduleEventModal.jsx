@@ -21,11 +21,10 @@ export const ScheduleEventModal = ({ slotInfo, onClose, getData }) => {
         };
         createEvent(value)
             .then((res) => {
-                console.log(res);
                 onClose()
                 getData()
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     useEffect(() => {

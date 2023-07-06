@@ -18,9 +18,7 @@ const CreateTeamModal = ({ onClose, getTeam }) => {
             .then((res) => {
                 setMembers(res.data.data);
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     }, []);
 
     const create = () => {
@@ -30,9 +28,7 @@ const CreateTeamModal = ({ onClose, getTeam }) => {
                 getTeam();
                 onClose();
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((error) => {});
     };
 
     return (

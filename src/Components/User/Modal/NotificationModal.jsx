@@ -16,10 +16,8 @@ export const NotificationModal = ({ isVisible, onClose }) => {
     };
 
     useEffect(() => {
-        console.log("notification useEffect called")
         if (socket) {
             socket.on("notification", () => {
-                console.log("notification")
                 toast.success("new Notification");
             });
         }
@@ -28,10 +26,9 @@ export const NotificationModal = ({ isVisible, onClose }) => {
     useEffect(() => {
         getAllNotification()
             .then((res) => {
-                console.log(res.data.notifications);
                 setnotification(res.data.notifications);
             })
-            .catch((error) => console.log(error.message));
+            .catch((error) => {});
     }, []);
 
     return (

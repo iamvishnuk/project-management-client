@@ -13,7 +13,7 @@ export const ManagePeopleTable = () => {
     const fetchData = () => {
         getAllPeople()
             .then((res) => setPeople(res.data.peopleData))
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export const ManagePeopleTable = () => {
                 fetchData();
                 showModal(false);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {});
     };
 
     return (

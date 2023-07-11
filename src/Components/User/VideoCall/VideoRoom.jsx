@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const baseURL = import.meta.env.VITE_REACT_APP_BASE_URL;
 import io from "socket.io-client";
 
-export const VideoRoom = () => {
+export default function VideoRoom() {
     const [micActive, setMicActive] = useState(true);
     const [cameraActive, setCameraActive] = useState(true);
     const param = useParams();
@@ -261,4 +261,4 @@ export const VideoRoom = () => {
             </div>
         </div>
     );
-};
+}

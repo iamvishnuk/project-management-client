@@ -16,7 +16,7 @@ import { BiExit } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { TeamDiscussion } from "../Components/User/Chat/TeamDiscussion";
 
-export const ViewTeam = () => {
+export default function ViewTeam() {
     const [team, setTeam] = useState(null);
     const [modal, showModal] = useState(false);
     const [deleteModal, showDeleteModal] = useState(false);
@@ -230,4 +230,4 @@ export const ViewTeam = () => {
             </Modal>
         </>
     );
-};
+}

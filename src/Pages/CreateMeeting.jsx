@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
-export const CreateMeeting = () => {
+export default function CreateMeeting() {
     const navigate = useNavigate();
     const [roomId, setRoomId] = useState("");
 

@@ -1,33 +1,31 @@
-import React, { useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { Route, Routes } from "react-router-dom";
 import LoginPage from "../Pages/LoginPage";
 import SignUpPage from "../Pages/SignUpPage";
 import ManageCeteogry from "../Pages/ManageCeteogry";
 import EmailVerificationPage from "../Pages/EmailVerificationPage";
 import ProtectRoutes from "../Components/User/ProtectRoutes/ProtectRoutes";
-import PlanPricingPage from "../Pages/PlanPricingPage";
 import ForgotPassword from "../Pages/ForgotPassword";
 import ChangePassword from "../Pages/ChangePassword";
 import ErrorPage from "../Pages/ErrorPage";
-import ProjectManagement from "../Pages/ProjectManagement";
-import CreateProject from "../Pages/CreateProject";
-import Team from "../Pages/Team";
-import UserProfile from "../Pages/UserProfile";
-import EditProject from "../Pages/EditProject";
+const ProjectManagement = lazy(() => import("../Pages/ProjectManagement"));
+const CreateProject = lazy(() => import("../Pages/CreateProject"));
+const Team = lazy(() => import("../Pages/Team"));
+const UserProfile = lazy(() => import("../Pages/UserProfile"));
+const EditProject = lazy(() => import("../Pages/EditProject"));
 import ProjectManagementLayout from "../Layout/ProjectManagementLayout";
-import BoardPage from "../Pages/BoardPage";
-import ManageAccess from "../Pages/ManageAccess";
+const BoardPage = lazy(() => import("../Pages/BoardPage"));
+const ManageAccess = lazy(() => import("../Pages/ManageAccess"));
 import DefaultLayout from "../Layout/DefaultLayout";
-import ManagePeople from "../Pages/ManagePeople";
-import { ViewTeam } from "../Pages/ViewTeam";
-import ScheduleMeeting from "../Pages/ScheduleMeeting";
-import { AssignToMe } from "../Pages/AssignToMe";
-import { CreateMeeting } from "../Pages/CreateMeeting";
-import { VideoRoom } from "../Components/User/VideoCall/VideoRoom";
+const ManagePeople = lazy(() => import("../Pages/ManagePeople"));
+const ViewTeam = lazy(() => import("../Pages/ViewTeam"));
+const ScheduleMeeting = lazy(() => import("../Pages/ScheduleMeeting"));
+const AssignToMe = lazy(() => import("../Pages/AssignToMe"));
+const CreateMeeting = lazy(() => import("../Pages/CreateMeeting"));
+const VideoRoom = lazy(() => import("../Components/User/VideoCall/VideoRoom"));
+import ThreeCirclesLoader from "../Components/User/Loaders/ThreeCirclesLoader";
 
 function UserRoutes() {
-    const navigate = useNavigate();  
-
     return (
         <Routes>
             <Route path="/" element={<LoginPage />} />
@@ -41,34 +39,109 @@ function UserRoutes() {
                     />
                     <Route
                         path="/project-management"
-                        element={<ProjectManagement />}
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <ProjectManagement />
+                            </Suspense>
+                        }
                     />
-                    <Route path="/create-project" element={<CreateProject />} />
-                    <Route path="/manage-team" element={<Team />} />
-                    <Route path="/user-profile" element={<UserProfile />} />
-                    <Route path="/edit-project/:id" element={<EditProject />} />
+                    <Route
+                        path="/create-project"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <CreateProject />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/manage-team"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <Team />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/user-profile"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <UserProfile />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/edit-project/:id"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <EditProject />
+                            </Suspense>
+                        }
+                    />
                     <Route
                         path="/manage-team/manage-people"
-                        element={<ManagePeople />}
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <ManagePeople />
+                            </Suspense>
+                        }
                     />
-                    <Route path="/manage-team/:id" element={<ViewTeam />} />
+                    <Route
+                        path="/manage-team/:id"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <ViewTeam />
+                            </Suspense>
+                        }
+                    />
                     <Route
                         path="/schedule-meeting"
-                        element={<ScheduleMeeting />}
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <ScheduleMeeting />
+                            </Suspense>
+                        }
                     />
-                    <Route path="/create-meeting" element={<CreateMeeting />} />
-                    <Route path="/meeting/:roomId" element={<VideoRoom />} />
-                    <Route path="/assinged-to-me" element={<AssignToMe />} />
+                    <Route
+                        path="/create-meeting"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <CreateMeeting />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/meeting/:roomId"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <VideoRoom />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/assinged-to-me"
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <AssignToMe />
+                            </Suspense>
+                        }
+                    />
                 </Route>
-                {/* <Route path="/plan-pricing" element={<PlanPricingPage />} /> */}
                 <Route element={<ProjectManagementLayout />}>
                     <Route
                         path="/project-management/:name/board"
-                        element={<BoardPage />}
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <BoardPage />
+                            </Suspense>
+                        }
                     />
                     <Route
                         path="/project-management/:name/manage-access"
-                        element={<ManageAccess />}
+                        element={
+                            <Suspense fallback={<ThreeCirclesLoader />}>
+                                <ManageAccess />
+                            </Suspense>
+                        }
                     />
                 </Route>
             </Route>

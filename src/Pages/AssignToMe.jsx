@@ -3,7 +3,7 @@ import { CardAssignedToMeTask } from "../Components/User/cards/CardAssignedToMeT
 import { useEffect } from "react";
 import { useState } from "react";
 
-export const AssignToMe = () => {
+export default function AssignToMe() {
     const [assignedTask, setAssignedTask] = useState([]);
     // getting the assigned task
     useEffect(() => {
@@ -21,4 +21,4 @@ export const AssignToMe = () => {
             </div>
         </>
     );
-};
+}

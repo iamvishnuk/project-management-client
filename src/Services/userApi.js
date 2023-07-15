@@ -119,8 +119,8 @@ const createProject = (values) => {
     return userAxiosInstance.post("/create-project", values, { withCredentials: true })
 }
 
-const getAllProjectDetail = () => {
-    return userAxiosInstance.get("/get-all-project", { withCredentials: true })
+const getAllProjectDetail = (limit, skip) => {
+    return userAxiosInstance.get(`/get-all-project/${limit}/${skip}`, { withCredentials: true })
 }
 
 const deleteProject = (id) => {

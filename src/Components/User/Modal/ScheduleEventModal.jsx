@@ -73,6 +73,7 @@ export const ScheduleEventModal = ({ slotInfo, onClose, getData }) => {
                         className="mx-2"
                         value={startDateTime}
                         onChange={(e) => setStartDateTime(e.target.value)}
+                        min={new Date().toISOString().slice(0, 16)}
                     />
                 </div>
                 <div className="flex items-center mb-3">
@@ -82,6 +83,7 @@ export const ScheduleEventModal = ({ slotInfo, onClose, getData }) => {
                         className="mx-2"
                         value={endDateTime}
                         onChange={(e) => setEndDateTime(e.target.value)}
+                        min={new Date().toISOString().slice(0, 16)}
                     />
                 </div>
                 <div>
@@ -92,7 +94,10 @@ export const ScheduleEventModal = ({ slotInfo, onClose, getData }) => {
                     />
                 </div>
                 <div className="flex justify-end">
-                    <button className="px-4 py-1 ml-2 font-medium rounded-sm hover:bg-gray-300" onClick={onClose}>
+                    <button
+                        className="px-4 py-1 ml-2 font-medium rounded-sm hover:bg-gray-300"
+                        onClick={onClose}
+                    >
                         Cancel
                     </button>
                     <button

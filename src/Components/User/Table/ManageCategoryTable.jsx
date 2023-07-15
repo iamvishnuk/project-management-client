@@ -18,7 +18,9 @@ const MangeCategoryTable = ({ categoryData, onDelete }) => {
                 setShowDeleteModal(false);
                 onDelete();
             })
-            .catch((err) => {});
+            .catch((err) => {
+                toast.error(err.response.data.message)
+            });
     };
 
     // for changing the value in the category edit state

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { MdAddAPhoto } from "react-icons/md";
 import { RotatingSquare } from "react-loader-spinner"
+import { toast } from "react-toastify";
 
 const UserProfile = () => {
     const [userDetails, setUserDetails] = useState({});
@@ -46,6 +47,11 @@ const UserProfile = () => {
         if(!file) {
             return
         }
+        if(!validate(file)) {
+            toast.warning("Your can only upload image files")
+            setUploading(false)
+            return
+        }
         const formData = new FormData();
         formData.append("image",file)
         uploadImage(formData)
@@ -55,6 +61,17 @@ const UserProfile = () => {
             })
             .catch((error) => {});
     };
+
+    const validate = (img) => {
+        const fileExtention = img.name.split(".").pop().toLowerCase()
+        const acceptFormat = ["jpg", "jpeg", "png"]
+        if(!acceptFormat.includes(fileExtention)) {
+            return false
+        } else {
+            return true
+        }
+    }
+
 
     useEffect(() => {
         getData();

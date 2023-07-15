@@ -7,6 +7,7 @@ import { ScheduleEventModal } from "../Components/User/Modal/ScheduleEventModal"
 import { useEffect } from "react";
 import { getEvent } from "../Services/userApi";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const localizer = momentLocalizer(moment);
 
@@ -67,12 +68,19 @@ export default function ScheduleMeeting() {
                     startAccessor="start"
                     endAccessor="end"
                     style={{ height: "87vh" }}
-                    defaultView="month"
+                    defaultView="week"
                     selectable={true}
                     events={eventDetails}
                     onSelectSlot={(slotInfo) => {
-                        handleAddEvent(slotInfo);
-                        showAddEventModal(true);
+                        const startDate = new Date(slotInfo.start)
+                        const currentDate = new Date()
+                        console.log(startDate, currentDate)
+                        if(startDate >= currentDate) {
+                            handleAddEvent(slotInfo);
+                            showAddEventModal(true);
+                        } else {
+                            toast.error("Can't select previous date")
+                        }
                     }}
                     eventPropGetter={eventStyleGetter}
                 />

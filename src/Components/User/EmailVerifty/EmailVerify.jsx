@@ -4,10 +4,12 @@ import ErrorPage from "../../../Pages/ErrorPage";
 import { emailVerification } from "../../../Services/userApi";
 
 const EmailVerify = () => {
-    const [validUrl, setValidUrl] = useState(false);
+    const [validUrl, setValidUrl] = useState(true);
     const navigate = useNavigate();
     const params = useParams();
+    console.log(params.id, params.token)
     useEffect(() => {
+        console.log("useEffect called")
         emailVerification(params.id, params.token)
             .then((res) => {
                 setValidUrl(true);
@@ -18,7 +20,7 @@ const EmailVerify = () => {
     }, [params]);
     return (
         <>
-            {validUrl ? (
+            {validUrl && validUrl ? (
                 <div className="flex justify-center items-center h-screen">
                     <div className=" text-center gap-8 grid">
                         <img
